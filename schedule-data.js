@@ -1,13 +1,5 @@
-let mysql,
-    con,
-    firebase,
-    roomName;
-global.SICSRglobalvariable = {
-  Resultset : null
-};
-
 // Connection to MySql sever.
-mysql = require('mysql');
+ const mysql = require('mysql');
 con = mysql.createConnection({
   host: "localhost",
   user: "root",
@@ -18,16 +10,11 @@ con = mysql.createConnection({
 // Connection to Firebase.
 firebase = require('firebase');
 firebase.initializeApp({
-  serviceAccount: "./SICSR-d924e501f52d.json",
+  serviceAccount: "./SICSR-d924xze501f52d.json",
   databaseURL: "https://sicsr-d4771.firebaseio.com"
 });
 
-// Connection check to MySql Server.
-con.connect(function(err) {
-  if (err) throw err;
-  console.log("connected");
-});
-// , FROM_UNIXTIME(end_time,'%h:%i:%s'), timestamp
+
 let fetchRecords = function(sql) {
   return new Promise (function(resolve, reject) {
     con.query(sql, function (err ,  result){
@@ -37,155 +24,95 @@ let fetchRecords = function(sql) {
   });
 };
 
-// Fetching data from SQL Sever.
-
-fetchRecords("SELECT start_time  FROM mrbs_entry ").then(function(fromResolve){
-
-    let Resultset = fromResolve;
-    for(let i = 0; i<Resultset.length; i++) {
-let startTime = Resultset[i].start_time;
-      console.log("1 done" + startTime);
-
-
-      fetchRecords("SELECT FROM_UNIXTIME(("+startTime+"),  '%h:%m:%s' )").then(function(fromResolve){
-          let sTime = fromResolve;
-          console.log("2 done" + sTime);
-
-
-          fetchRecords("Update mrbs_entry set start_time = '"+sTime+"'").then(function(fromResolve){
-            console.log("3 done" + sql);
-          }).catch(function(fromReject){
-            console.log("3 fail"+ fromReject);
-          });
-
-      }).catch(function(fromReject){
-        console.log("2 fail"+fromReject);
-      });
-    }
+fetchRecords("SELECT start_time, end_time, room_id, timestamp, Program, Batch, Course, Semester, Faculty, Division, id FROM mrbs_entry").then(function(fromResolve){
+  Resultset = fromResolve;
+  setRoomName(Resultset);
+  //console.log(global);
 }).catch(function(fromReject){
-console.log("1 fail"+fromReject);
+  console.log(fromReject);
 });
 
-// con.query("SELECT start_time  FROM mrbs_entry ", function (err , result){
-//   if(err) throw err;
-//     let Resultset = result;
-// for(let i = 0; i<Resultset.length; i++) {
-//     let startTime = Resultset[i].start_time;
-//     var timeStamp = Resultset[i].timestamp;
-//
-//     con.query("SELECT FROM_UNIXTIME("+startTime+")", function)
-//       console.log();
-//
-// }
-    //getRoomName(result);
-     // SICSRglobalvariable.Resultset = result;
-    // let j=0;
-    // for(let i = 0; i<SICSRglobalvariable.Resultset.length; i++) {
-    //
-    //   con.query("Select room_name , id from mrbs_room where id = '" +SICSRglobalvariable.Resultset[i].room_id+ "'", function (err, result2){
-    //     if (err) throw err;
+//set room_id to the room_name retrive and send it forward to firebase.
+function setRoomName(value){
+  let objValue = value;
 
+  for(let i = 0; i<objValue.length; i++) {
 
-        // while(j<result2.length){
-        //
-        //    roomName = result2[j].room_name;
-        //
-        //   if(roomName == null && SICSRglobalvariable.Resultset[i] == null){
-        //     // TODO add some code here.
-        //   } else {
-        //
-        //     setRoomName(roomName, SICSRglobalvariable.Resultset[i]);
-        //   }
-        //
-        //   j++;
-        // }
+    con.query("Select room_name , id from mrbs_room where id = '" + objValue[i].room_id + "'", function (err, result2){
+      if (err) throw err;
+      let j =0;
+      while(j<result2.length){
+         roomName = result2[j].room_name;
+        if(roomName == null && objValue[i] == null){
+          // TODO add some code here.
+        } else {
+            objValue[i].room_id = roomName;
+            saveRecord(objValue[i]);
+        }
+        j++;
+      }
+    });
+  }
+}
 
-  //}
+function saveRecord(data){
+  let Resultset = [];
+  Resultset = data;
+  feedDatainFirebase(Resultset);
+}
 
-  // Set the value of room_id. (From orignal value of room_id to the value of room_name).
-  //And calling firebase function to insert the value of final Resultset into firebase DB.
-//   function setRoomName(roomName, object) {
-//     let localResultset = object;
-//     if(localResultset == null &&  roomName == null){
-//       console.log("room_id in Resultset is not updated to room_name ");
-//     } else {
-//       localResultset.room_id = roomName;
-//       //console.log(global);
-//     //  updateFirebaseDB(localResultset);
-//     }
-//   }
-// });
-//
-// // fetch room_name against each room id and forwarding it to setRoomName.
-// function getRoomName(value){
-//   var objValue = value;
-//    SICSRglobalvariable.Resultset = objValue;
-//    let j =0;
-//
-//
-//   for(let i = 0; i<SICSRglobalvariable.Resultset.length; i++) {
-//
-//     con.query("Select room_name , id from mrbs_room where id = '" +SICSRglobalvariable.Resultset[i].room_id+ "'", function (err, result2){
-//       if (err) throw err;
-//
-//
-//       while(j<result2.length){
-//
-//          roomName = result2[j].room_name;
-//
-//         if(roomName == null && SICSRglobalvariable.Resultset[i] == null){
-//           // TODO add some code here.
-//         } else {
-//
-//           setRoomName(roomName, SICSRglobalvariable.Resultset[i]);
-//         }
-//
-//         j++;
-//       }
-//     });
-//   }
-// }
-//
-// // Set the value of room_id. (From orignal value of room_id to the value of room_name).
-// //And calling firebase function to insert the value of final Resultset into firebase DB.
-// function setRoomName(roomName, object) {
-//   let localResultset = object;
-//   if(localResultset == null &&  roomName == null){
-//     console.log("room_id in Resultset is not updated to room_name ");
-//   } else {
-//     localResultset.room_id = roomName;
-//     //console.log(global);
-//   //  updateFirebaseDB(localResultset);
-//   }
-// }
-// console.log(global);
-// //console.log(global);
-// //Firebase code.
-// // function updateFirebaseDB(object) {
-// //   var localResultset = object;
-// //   let ref = firebase.database().ref("Lecture");
-// //   let i=0;
-// //   while(i<localResultset.length){
-// //     ref.push({
-// //       devanshi : "sukhija"
-// //       // course_name: Resultset[i].Course,
-// //       // program_name : Resultset[i].Program,
-// //       // room_number : Resultset[i].room_id,
-// //       // start_time : Resultset[i].start_time,
-// //       // end_time : Resultset[i].end_time,
-// //       // teacher_name : Resultset[i].Faculty,
-// //       // timestamp : Resultset[i].timestamp
-// //
-// //     });
-// //
-// //     i++;
-// //   }
-// // }
-//
-// // (function firebase_update(){
-// //   let ref = firebase.database().ref("Lecture");
-// //   console.log(global);
-// //   ref.push({
-// //     devanshi : "avienaya"
-// //   });
-// // })();
+function feedDatainFirebase(value){
+  var Resultset = value;
+  let program;
+  let path;
+
+  // setting node path to store Resultset in respective nodes.
+  //assign correct Batch to the variable.
+  if(Resultset.Batch == "Batch1518") {
+    program = "1518";
+  } else if (Resultset == "Batch1619") {
+    program = "1619";
+  } else if (Resultset.Batch == "Batch1720") {
+    program = "1720";
+  } else {
+    program = "";
+  }
+  //assigning correct program to the variable.
+  if(Resultset.Program == "bca") {
+    program += "bca";
+  }else if (Resultset.Program == "bba-it") {
+    program += "bba-it";
+  } else if (Resultset.Program == "mca") {
+    program += "mca";
+  } else if (Resultset.Program == "mss") {
+    program += "mss";
+  } else if (Resultset.Program == "mba-it") {
+    program += "mba-it";
+  } else {
+    program += "";
+  }
+
+  path= Resultset.Batch+"/"+program+"/"+Resultset.Semester+"/Div"+Resultset.Division+"/"+Resultset.Course;
+
+  console.log(path);
+  let pathRef = firebase.database().ref(path+"/LectureID-"+Resultset.id);
+  let checkRef = firebase.database().ref(path);
+  checkRef.once("value").then(function(snapshot){
+    var dataExists = snapshot.child("LectureID-"+Resultset.id).exists();
+    if(!dataExists) {
+      pathRef.set ({
+            course_name: Resultset.Course,
+              batch_name : Resultset.Batch,
+              division : Resultset.Division,
+              sem : Resultset.Semester,
+            program_name : Resultset.Program,
+            room_number : Resultset.room_id,
+            start_time : Resultset.start_time,
+            end_time : Resultset.end_time,
+            teacher_name : Resultset.Faculty,
+            timestamp : Resultset.timestamp
+          });
+      } else {console.log("Data already exists");}
+  });
+
+}
