@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">SICSR Attendance</string>
+    <string name="sicsr_logo_description">Sicsr logo</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="login_get_help_image">login get help image</string>
+    <string name="get_help">Get help!</string>
+</resources>
