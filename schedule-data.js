@@ -13,8 +13,7 @@ firebase.initializeApp({
   serviceAccount: "./SICSR-d924xze501f52d.json",
   databaseURL: "https://sicsr-d4771.firebaseio.com"
 });
-
-
+// Fetching records from database with callback functions.
 let fetchRecords = function(sql) {
   return new Promise (function(resolve, reject) {
     con.query(sql, function (err ,  result){
@@ -65,7 +64,6 @@ function feedDatainFirebase(value){
   var Resultset = value;
   let program;
   let path;
-
   // setting node path to store Resultset in respective nodes.
   //assign correct Batch to the variable.
   if(Resultset.Batch == "Batch1518") {
@@ -91,12 +89,11 @@ function feedDatainFirebase(value){
   } else {
     program += "";
   }
-
+  // assigning path value to path variable
   path= Resultset.Batch+"/"+program+"/"+Resultset.Semester+"/Div"+Resultset.Division+"/"+Resultset.Course;
-
-  console.log(path);
+  //checking if data exsits , if not then uploading data to appropirate node.
   let pathRef = firebase.database().ref(path+"/LectureID-"+Resultset.id);
-  let checkRef = firebase.database().ref(path);
+  var checkRef = firebase.database().ref(path);
   checkRef.once("value").then(function(snapshot){
     var dataExists = snapshot.child("LectureID-"+Resultset.id).exists();
     if(!dataExists) {
@@ -114,5 +111,24 @@ function feedDatainFirebase(value){
           });
       } else {console.log("Data already exists");}
   });
-
+// adding lectures data to node: Lecture
+  var checkRef = firebase.database().ref("Lectures");
+  checkRef.once("value").then(function(snapshot){
+  var dataExists = snapshot.child("LectureID-"+Resultset.id).exists();
+  if(!dataExists) {
+    let trackRef =firebase.database().ref("Lectures/LectureID-"+Resultset.id);
+    trackRef.set ({
+          course_name: Resultset.Course,
+            batch_name : Resultset.Batch,
+            division : Resultset.Division,
+            sem : Resultset.Semester,
+          program_name : Resultset.Program,
+          room_number : Resultset.room_id,
+          start_time : Resultset.start_time,
+          end_time : Resultset.end_time,
+          teacher_name : Resultset.Faculty,
+          timestamp : Resultset.timestamp
+        });
+    } else {console.log("Data already exists");}
+  });
 }
