@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableRow xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:id="@+id/lecture_tablerow_layout">
+
+    <TextView
+        android:id="@+id/lecture_time_column"
+        android:layout_width="137dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:fontFamily="@font/open_sans"
+        android:textAlignment="center"
+        android:textColor="#000000"
+        android:textSize="20sp"
+        tools:text="10:00 - 11:00" />
+
+
+    <TextView
+        android:id="@+id/lecture_program_column"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:fontFamily="@font/open_sans"
+        android:textAlignment="center"
+        android:textColor="#000000"
+        android:textSize="20sp"
+        tools:text="BCA" />
+
+
+    <TextView
+        android:id="@+id/lecture_course_column"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:fontFamily="@font/open_sans"
+        android:textAlignment="center"
+        android:textColor="#000000"
+        android:textSize="20sp"
+        tools:text="Introduction to Python" />
+
+
+    <TextView
+        android:id="@+id/lecture_room_column"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:fontFamily="@font/open_sans"
+        android:textAlignment="center"
+        android:textColor="#000000"
+        android:textSize="20sp"
+        android: android:text="307"/>
+</TableRow>
