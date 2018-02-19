@@ -9,6 +9,8 @@ import android.widget.Toast
 import com.devanshisukhija.sicsrattendance.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import kotlinx.android.synthetic.main.activity_login.*
 
 class LoginActivity : AppCompatActivity() {
@@ -20,6 +22,7 @@ class LoginActivity : AppCompatActivity() {
     // Firebase refferences for Authentication.
     private var mAuth: FirebaseAuth? = null
     private var user : FirebaseUser? = null
+    private var mDatabase : DatabaseReference? = null
 
     //global variables
     private var emailString : String? = null
@@ -30,10 +33,10 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-     //   FirebaseApp.initializeApp(this)
+
+        // initializing firebase Auth and database Reference.
         mAuth = FirebaseAuth.getInstance()
-
-
+        mDatabase = FirebaseDatabase.getInstance().reference
     }
 
     // function for when the login button is clicked.
@@ -49,7 +52,9 @@ class LoginActivity : AppCompatActivity() {
 
                  if(task.isSuccessful) {
                      // TODO : Remove
-                     Log.d(TAG, "signInWithEmail:success")
+
+                     var token = user?.getIdToken(true)
+                     Log.d(TAG, "signInWithEmail:success :" + token)
 
                  } else {
                      //TODO : Remove
@@ -72,6 +77,11 @@ class LoginActivity : AppCompatActivity() {
                 .setNegativeButton("Close" ){ _, _ -> }.show()
 
         }
+
+
+     fun UIUpdate(databaseRef : DatabaseReference) {
+
+     }
 }
 
 
