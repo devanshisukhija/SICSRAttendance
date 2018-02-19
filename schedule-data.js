@@ -1,5 +1,7 @@
+// dateFormat library
+var dateFormat = require('dateformat');
 // Connection to MySql sever.
- const mysql = require('mysql');
+const mysql = require('mysql');
 con = mysql.createConnection({
   host: "localhost",
   user: "root",
@@ -13,7 +15,8 @@ firebase.initializeApp({
   serviceAccount: "./SICSR-d924xze501f52d.json",
   databaseURL: "https://sicsr-d4771.firebaseio.com"
 });
-// Fetching records from database with callback functions.
+
+// Reusable promise(callback) function to pass any mySql query and fetch response. func-1
 let fetchRecords = function(sql) {
   return new Promise (function(resolve, reject) {
     con.query(sql, function (err ,  result){
@@ -23,112 +26,205 @@ let fetchRecords = function(sql) {
   });
 };
 
-fetchRecords("SELECT start_time, end_time, room_id, timestamp, Program, Batch, Course, Semester, Faculty, Division, id FROM mrbs_entry").then(function(fromResolve){
-  Resultset = fromResolve;
-  setRoomName(Resultset);
-  //console.log(global);
-}).catch(function(fromReject){
-  console.log(fromReject);
+fetchRecords("SELECT start_time, end_time, room_id, timestamp, Program, Batch, Course, Semester, Faculty, Division, id FROM mrbs_entry").then(function(resolved_args){
+
+  /*passing the resolved arguments to another function for fetch the room number , which is called the
+  setRoomName() function.
+  */
+  setRoomName(resolved_args);
+
+}).catch(function(rejection_arg){
+  console.error(rejection_arg);
 });
 
-//set room_id to the room_name retrive and send it forward to firebase.
+//Set room_id to the room_name retrive and send it forward to firebase. func-2
 function setRoomName(value){
-  let objValue = value;
+  let Resultset = value;
 
-  for(let i = 0; i<objValue.length; i++) {
+  for(let i = 0; i<Resultset.length; i++) {
 
-    con.query("Select room_name , id from mrbs_room where id = '" + objValue[i].room_id + "'", function (err, result2){
+    con.query("Select room_name , id from mrbs_room where id = '" + Resultset[i].room_id + "'", function (err, result_args){
       if (err) throw err;
       let j =0;
-      while(j<result2.length){
-         roomName = result2[j].room_name;
-        if(roomName == null && objValue[i] == null){
+      while(j<result_args.length){
+        roomName = result_args[j].room_name;
+        if(roomName == null && Resultset1P[i] == null){
           // TODO add some code here.
         } else {
-            objValue[i].room_id = roomName;
-            saveRecord(objValue[i]);
+          Resultset[i].room_id = roomName;
+
+          // call to feedDatainFirebase() function which stores the firebase database.
+          feedDatainFirebase(Resultset[i]);
         }
         j++;
       }
     });
   }
 }
-
-function saveRecord(data){
-  let Resultset = [];
-  Resultset = data;
-  feedDatainFirebase(Resultset);
-}
-
+// func-3
+//function to save the records in firebase database at node:
+// "dddd, mmmm dS, yyyy, h:MM:ss TT"
 function feedDatainFirebase(value){
-  var Resultset = value;
+  let Resultset = [];
+  Resultset = value;
   let program;
   let path;
-  // setting node path to store Resultset in respective nodes.
-  //assign correct Batch to the variable.
-  if(Resultset.Batch == "Batch1518") {
-    program = "1518";
-  } else if (Resultset == "Batch1619") {
-    program = "1619";
-  } else if (Resultset.Batch == "Batch1720") {
-    program = "1720";
+
+  if(Resultset != null) {
+    let updated_start_time = dateFormat(new Date(Resultset.start_time * 10000) , "h:MM:ss TT" );
+    let updated_end_time = dateFormat(new Date(Resultset.end_time * 10000) , "h:MM:ss TT" );
+    let schedule_timestamp = dateFormat(new Date(Resultset.start_time * 10000), "dddd, mmmm dS");
+    // setting node path to store Resultset in respective nodes.
+    //assign correct Batch to the variable.
+    if(Resultset.Batch == "Batch1518") {
+      program = "1518";
+    } else if (Resultset.Batch == "Batch1619") {
+      program = "1619";
+    } else if (Resultset.Batch == "Batch1720") {
+      program = "1720";
+    } else {
+      program = "";
+    }
+    //assigning correct program to the variable.
+    if(Resultset.Program == "bca") {
+      program += "bca";
+    }else if (Resultset.Program == "bba-it") {
+      program += "bba-it";
+    } else if (Resultset.Program == "mca") {
+      program += "mca";
+    } else if (Resultset.Program == "mss") {
+      program += "mss";
+    } else if (Resultset.Program == "mba-it") {
+      program += "mba-it";
+    } else {
+      program += "";
+    }
+
+    // path to where lecture info will be stored batch->program->semester->division->course->timestamp->lectureid-> lecture_info
+    path= Resultset.Batch+"/"+program+"/"+Resultset.Semester+"/Div"+Resultset.Division+"/"+Resultset.Course+"/"+schedule_timestamp;
+
+    let store1_pathRef = firebase.database().ref(path+"/LectureID-"+Resultset.id);
+    let verify1_checkRef = firebase.database().ref(path);
+    verify1_checkRef.once("value").then(function(snapshot){
+      var dataExists = snapshot.child("LectureID-"+Resultset.id).exists();
+      if(!dataExists) {
+        store1_pathRef.set ({
+          course_code: Resultset.Course,
+          batch_name : Resultset.Batch,
+          division : Resultset.Division,
+          sem : Resultset.Semester,
+          program_name : Resultset.Program,
+          room_number : Resultset.room_id,
+          start_time : updated_start_time,
+          end_time : updated_end_time,
+          teacher_name : Resultset.Faculty,
+          timestamp : schedule_timestamp
+        });
+      } else { }
+    }).catch(function(error) {
+      console.error(error);
+    });
+
+    //check Ref: /Lectures/timestamp
+    let verify2_checkRef = firebase.database().ref("Lectures/"+schedule_timestamp);
+    verify2_checkRef.once("value").then(function(snapshot){
+      dataExists = snapshot.child("LectureID-"+Resultset.id).exists();
+      if(!dataExists) {
+
+        //atore path : /Lectures/timestamp/LectureID-<id>
+        let store2_pathRef =firebase.database().ref("/Lectures/"+schedule_timestamp+"/LectureID-"+Resultset.id);
+        store2_pathRef.set ({
+          course_code: Resultset.Course,
+          batch_name : Resultset.Batch,
+          division : Resultset.Division,
+          sem : Resultset.Semester,
+          program_name : Resultset.Program,
+          room_number : Resultset.room_id,
+          start_time : updated_start_time,
+          end_time : updated_end_time,
+          teacher_name : Resultset.Faculty,
+          timestamp : schedule_timestamp
+        });
+      } else { }
+    }).catch(function(error) {
+      console.error(error);
+    });
+
+    //function call filter out lectures: facultyFilter()
+    console.log("passed value");
+    facultyFilter(Resultset);
+
   } else {
-    program = "";
+    // TODO : Resultset is empty
   }
-  //assigning correct program to the variable.
-  if(Resultset.Program == "bca") {
-    program += "bca";
-  }else if (Resultset.Program == "bba-it") {
-    program += "bba-it";
-  } else if (Resultset.Program == "mca") {
-    program += "mca";
-  } else if (Resultset.Program == "mss") {
-    program += "mss";
-  } else if (Resultset.Program == "mba-it") {
-    program += "mba-it";
+
+}
+
+//func 4.
+//Stores lecture info for each faculty
+function facultyFilter(value) {
+  let Resultset = value;
+
+  // func scope variables. updated time and date stamps
+  let updated_start_time = dateFormat(new Date(Resultset.start_time * 10000) , "h:MM:ss TT" );
+  let updated_end_time = dateFormat(new Date(Resultset.end_time * 10000) , "h:MM:ss TT" );
+  let schedule_timestamp = dateFormat(new Date(Resultset.start_time * 10000), "dddd, mmmm dS");
+
+  // checking if faculty code exists at /Users/Faculty
+  let verify1_checkRef = firebase.database().ref("/Users/Faculty");
+
+  // condition to check if arg passed is empty ot not. Resultset.
+  if(Resultset == null) {
+
+    // TODO: Resultset is empty or null
+
   } else {
-    program += "";
-  }
-  // assigning path value to path variable
-  path= Resultset.Batch+"/"+program+"/"+Resultset.Semester+"/Div"+Resultset.Division+"/"+Resultset.Course;
-  //checking if data exsits , if not then uploading data to appropirate node.
-  let pathRef = firebase.database().ref(path+"/LectureID-"+Resultset.id);
-  var checkRef = firebase.database().ref(path);
-  checkRef.once("value").then(function(snapshot){
-    var dataExists = snapshot.child("LectureID-"+Resultset.id).exists();
-    if(!dataExists) {
-      pathRef.set ({
-            course_name: Resultset.Course,
+    //checking if FacultyCode exists in the firebase database. /Users/Faculty
+    verify1_checkRef.once("value").then(function(snapshot) {
+      var key = snapshot.key;
+      var dataExists = snapshot.child(Resultset.Faculty).exists();
+
+      if(dataExists) {
+
+        // adding the lecture at individual faculty code keyed node.
+        // it already exsits.
+
+        let store1_pathRef = firebase.database().ref("/Users/"+Resultset.Faculty+"/Lectures/"+schedule_timestamp+"/LectureID-"+Resultset.id); // path to set.
+        let verify2_checkRef = firebase.database().ref("/Users/"+Resultset.Faculty+"/Lectures/"+schedule_timestamp); // path for once check.
+        //check if Lecture already exists.
+        verify2_checkRef.once("value").then(function(snapshot) {
+
+          var dataExists = snapshot.child("/LectureID-"+Resultset.id).exists();
+          if(dataExists) {
+
+            //TODO : not sure about break functionality:
+
+          } else {
+            store1_pathRef.set({
+              course_code: Resultset.Course,
               batch_name : Resultset.Batch,
               division : Resultset.Division,
               sem : Resultset.Semester,
-            program_name : Resultset.Program,
-            room_number : Resultset.room_id,
-            start_time : Resultset.start_time,
-            end_time : Resultset.end_time,
-            teacher_name : Resultset.Faculty,
-            timestamp : Resultset.timestamp
-          });
-      } else {console.log("Data already exists");}
-  });
-// adding lectures data to node: Lecture
-  var checkRef = firebase.database().ref("Lectures");
-  checkRef.once("value").then(function(snapshot){
-  var dataExists = snapshot.child("LectureID-"+Resultset.id).exists();
-  if(!dataExists) {
-    let trackRef =firebase.database().ref("Lectures/LectureID-"+Resultset.id);
-    trackRef.set ({
-          course_name: Resultset.Course,
-            batch_name : Resultset.Batch,
-            division : Resultset.Division,
-            sem : Resultset.Semester,
-          program_name : Resultset.Program,
-          room_number : Resultset.room_id,
-          start_time : Resultset.start_time,
-          end_time : Resultset.end_time,
-          teacher_name : Resultset.Faculty,
-          timestamp : Resultset.timestamp
+              program_name : Resultset.Program,
+              room_number : Resultset.room_id,
+              start_time : updated_start_time,
+              end_time : updated_end_time,
+              teacher_name : Resultset.Faculty,
+              timestamp : schedule_timestamp
+            });
+            console.error("done");
+          }
+        }).catch(function(error) {
+          console.error(error);
         });
-    } else {console.log("Data already exists");}
-  });
+
+      } else {
+        // The faculty doesnt exists
+        console.log('Faculty exists.');
+      }
+
+    }).catch(function(error) {
+      console.error(error);
+    });
+  }
 }
