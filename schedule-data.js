@@ -1,3 +1,4 @@
+
 // dateFormat library
 var dateFormat = require('dateformat');
 // Connection to MySql sever.
@@ -69,6 +70,10 @@ function feedDatainFirebase(value){
   Resultset = value;
   let program;
   let path;
+  let path_to_fetch_courseName = "";
+  let pathRef_to_fetch_courseName = "";
+  let fetched_courseName = "";
+
 
   if(Resultset != null) {
     let updated_start_time = dateFormat(new Date(Resultset.start_time * 10000) , "h:MM:ss TT" );
@@ -99,60 +104,72 @@ function feedDatainFirebase(value){
     } else {
       program += "";
     }
+    // path to where lecture info will be stored batch->program->semester->division->course->timestamp
+    path= "/"+Resultset.Batch+"/"+program+"/"+Resultset.Semester+"/Div"+Resultset.Division+"/"+Resultset.Course+"/"+schedule_timestamp;
+    path_to_fetch_courseName = "/"+Resultset.Batch+"/"+program+"/"+Resultset.Semester+"/Courses";
+    // path_to_fetch_courseName : <batch>/<program>/<semester>/Courses.
+    pathRef_to_fetch_courseName = firebase.database().ref( "/"+Resultset.Batch+"/"+program+"/"+Resultset.Semester+"/Courses");
+    // fetching course name using course code : before inserting.
+    pathRef_to_fetch_courseName.once("value").then(function(snapshot) {
+      //this variable can be null, for it to be not null, select semester and course should match when making time-table.
+      fetched_courseName = snapshot.child(Resultset.Course).val();
 
-    // path to where lecture info will be stored batch->program->semester->division->course->timestamp->lectureid-> lecture_info
-    path= Resultset.Batch+"/"+program+"/"+Resultset.Semester+"/Div"+Resultset.Division+"/"+Resultset.Course+"/"+schedule_timestamp;
+      //Store path at  batch->program->semester->division->course->timestamp->lectureid-> lecture_info
+      let store1_pathRef = firebase.database().ref(path+"/LectureID-"+Resultset.id);
+      // check path at batch->program->semester->division->course->timestamp
+      let verify1_checkRef = firebase.database().ref(path);
+      verify1_checkRef.once("value").then(function(snapshot){
+        var dataExists = snapshot.child("LectureID-"+Resultset.id).exists();
+        if(!dataExists) {
+          store1_pathRef.set ({
+            course_code: Resultset.Course,
+            course_name : fetched_courseName,
+            batch_name : Resultset.Batch,
+            division : Resultset.Division,
+            sem : Resultset.Semester,
+            program_name : Resultset.Program,
+            room_number : Resultset.room_id,
+            start_time : updated_start_time,
+            end_time : updated_end_time,
+            teacher_name : Resultset.Faculty,
+            timestamp : schedule_timestamp
+          });
+        } else { }
+      }).catch(function(error) {
+        console.error(error);
+      });
 
-    let store1_pathRef = firebase.database().ref(path+"/LectureID-"+Resultset.id);
-    let verify1_checkRef = firebase.database().ref(path);
-    verify1_checkRef.once("value").then(function(snapshot){
-      var dataExists = snapshot.child("LectureID-"+Resultset.id).exists();
-      if(!dataExists) {
-        store1_pathRef.set ({
-          course_code: Resultset.Course,
-          batch_name : Resultset.Batch,
-          division : Resultset.Division,
-          sem : Resultset.Semester,
-          program_name : Resultset.Program,
-          room_number : Resultset.room_id,
-          start_time : updated_start_time,
-          end_time : updated_end_time,
-          teacher_name : Resultset.Faculty,
-          timestamp : schedule_timestamp
-        });
-      } else { }
-    }).catch(function(error) {
-      console.error(error);
-    });
+      //check Ref: /Lectures/timestamp
+      let verify2_checkRef = firebase.database().ref("Lectures/"+schedule_timestamp);
+      verify2_checkRef.once("value").then(function(snapshot){
+        dataExists = snapshot.child("LectureID-"+Resultset.id).exists();
+        if(!dataExists) {
 
-    //check Ref: /Lectures/timestamp
-    let verify2_checkRef = firebase.database().ref("Lectures/"+schedule_timestamp);
-    verify2_checkRef.once("value").then(function(snapshot){
-      dataExists = snapshot.child("LectureID-"+Resultset.id).exists();
-      if(!dataExists) {
-
-        //atore path : /Lectures/timestamp/LectureID-<id>
-        let store2_pathRef =firebase.database().ref("/Lectures/"+schedule_timestamp+"/LectureID-"+Resultset.id);
-        store2_pathRef.set ({
-          course_code: Resultset.Course,
-          batch_name : Resultset.Batch,
-          division : Resultset.Division,
-          sem : Resultset.Semester,
-          program_name : Resultset.Program,
-          room_number : Resultset.room_id,
-          start_time : updated_start_time,
-          end_time : updated_end_time,
-          teacher_name : Resultset.Faculty,
-          timestamp : schedule_timestamp
-        });
-      } else { }
+          //atore path : /Lectures/timestamp/LectureID-<id>
+          let store2_pathRef =firebase.database().ref("/Lectures/"+schedule_timestamp+"/LectureID-"+Resultset.id);
+          store2_pathRef.set ({
+            course_code: Resultset.Course,
+            course_name : fetched_courseName,
+            batch_name : Resultset.Batch,
+            division : Resultset.Division,
+            sem : Resultset.Semester,
+            program_name : Resultset.Program,
+            room_number : Resultset.room_id,
+            start_time : updated_start_time,
+            end_time : updated_end_time,
+            teacher_name : Resultset.Faculty,
+            timestamp : schedule_timestamp
+          });
+        } else { }
+      }).catch(function(error) {
+        console.error(error);
+      });
     }).catch(function(error) {
       console.error(error);
     });
 
     //function call filter out lectures: facultyFilter()
-    console.log("passed value");
-    facultyFilter(Resultset);
+    facultyFilter(Resultset , path_to_fetch_courseName);
 
   } else {
     // TODO : Resultset is empty
@@ -162,8 +179,15 @@ function feedDatainFirebase(value){
 
 //func 4.
 //Stores lecture info for each faculty
-function facultyFilter(value) {
+function facultyFilter(value , path) {
   let Resultset = value;
+  // path_to_fetch_courseName : <batch>/<program>/<semester>/Courses.
+  let path_to_fetch_courseName = path;
+  let pathRef_to_fetch_courseName = "";
+  let fetched_courseName = "";
+  let uid;
+  let faculty_uidRef;
+
 
   // func scope variables. updated time and date stamps
   let updated_start_time = dateFormat(new Date(Resultset.start_time * 10000) , "h:MM:ss TT" );
@@ -173,6 +197,8 @@ function facultyFilter(value) {
   // checking if faculty code exists at /Users/Faculty
   let verify1_checkRef = firebase.database().ref("/Users/Faculty");
 
+
+
   // condition to check if arg passed is empty ot not. Resultset.
   if(Resultset == null) {
 
@@ -181,46 +207,54 @@ function facultyFilter(value) {
   } else {
     //checking if FacultyCode exists in the firebase database. /Users/Faculty
     verify1_checkRef.once("value").then(function(snapshot) {
-      var key = snapshot.key;
       var dataExists = snapshot.child(Resultset.Faculty).exists();
-
       if(dataExists) {
+          uid = snapshot.child(Resultset.Faculty).val();
 
-        // adding the lecture at individual faculty code keyed node.
-        // it already exsits.
+        pathRef_to_fetch_courseName = firebase.database().ref(path_to_fetch_courseName);
+      // fetching course name using course code : before inserting.
+      pathRef_to_fetch_courseName.once("value").then(function(snapshot) {
+        //this variable can be null, for it to be not null, select semester and course should match when making time-table.
+          fetched_courseName = snapshot.child(Resultset.Course).val();
 
-        let store1_pathRef = firebase.database().ref("/Users/"+Resultset.Faculty+"/Lectures/"+schedule_timestamp+"/LectureID-"+Resultset.id); // path to set.
-        let verify2_checkRef = firebase.database().ref("/Users/"+Resultset.Faculty+"/Lectures/"+schedule_timestamp); // path for once check.
-        //check if Lecture already exists.
-        verify2_checkRef.once("value").then(function(snapshot) {
+          // adding the lecture at individual faculty code keyed node.
+          // it already exsits.
+          faculty_uidRef = "/Users/"+uid+"/Lectures/"+schedule_timestamp;
 
-          var dataExists = snapshot.child("/LectureID-"+Resultset.id).exists();
-          if(dataExists) {
+          let store1_pathRef = firebase.database().ref(faculty_uidRef+"/LectureID-"+Resultset.id); // path to set.
+          let verify2_checkRef = firebase.database().ref(faculty_uidRef); // path for on check.
+          //check if Lecture already exists.
+          verify2_checkRef.once("value").then(function(snapshot) {
 
-            //TODO : not sure about break functionality:
+            var dataExists = snapshot.child("/LectureID-"+Resultset.id).exists();
+            if(dataExists) {
 
-          } else {
-            store1_pathRef.set({
-              course_code: Resultset.Course,
-              batch_name : Resultset.Batch,
-              division : Resultset.Division,
-              sem : Resultset.Semester,
-              program_name : Resultset.Program,
-              room_number : Resultset.room_id,
-              start_time : updated_start_time,
-              end_time : updated_end_time,
-              teacher_name : Resultset.Faculty,
-              timestamp : schedule_timestamp
-            });
-            console.error("done");
-          }
-        }).catch(function(error) {
-          console.error(error);
-        });
+              //TODO : not sure about break functionality:
 
+            } else {
+              store1_pathRef.set({
+                course_code: Resultset.Course,
+                course_name : fetched_courseName,
+                batch_name : Resultset.Batch,
+                division : Resultset.Division,
+                sem : Resultset.Semester,
+                program_name : Resultset.Program,
+                room_number : Resultset.room_id,
+                start_time : updated_start_time,
+                end_time : updated_end_time,
+                teacher_name : Resultset.Faculty,
+                timestamp : schedule_timestamp
+              });
+            }
+          }).catch(function(error) {
+            console.error(error);
+          });
+      }).catch(function(error) {
+        console.error(error);
+      });
       } else {
         // The faculty doesnt exists
-        console.log('Faculty exists.');
+        console.log('Faculty doesnt exists.');
       }
 
     }).catch(function(error) {

@@ -104,7 +104,6 @@ function feedDatainFirebase(value){
     } else {
       program += "";
     }
-
     // path to where lecture info will be stored batch->program->semester->division->course->timestamp
     path= "/"+Resultset.Batch+"/"+program+"/"+Resultset.Semester+"/Div"+Resultset.Division+"/"+Resultset.Course+"/"+schedule_timestamp;
     path_to_fetch_courseName = "/"+Resultset.Batch+"/"+program+"/"+Resultset.Semester+"/Courses";
@@ -186,6 +185,8 @@ function facultyFilter(value , path) {
   let path_to_fetch_courseName = path;
   let pathRef_to_fetch_courseName = "";
   let fetched_courseName = "";
+  let uid;
+  let faculty_uidRef;
 
 
   // func scope variables. updated time and date stamps
@@ -196,6 +197,8 @@ function facultyFilter(value , path) {
   // checking if faculty code exists at /Users/Faculty
   let verify1_checkRef = firebase.database().ref("/Users/Faculty");
 
+
+
   // condition to check if arg passed is empty ot not. Resultset.
   if(Resultset == null) {
 
@@ -204,10 +207,10 @@ function facultyFilter(value , path) {
   } else {
     //checking if FacultyCode exists in the firebase database. /Users/Faculty
     verify1_checkRef.once("value").then(function(snapshot) {
-      var key = snapshot.key;
       var dataExists = snapshot.child(Resultset.Faculty).exists();
-
       if(dataExists) {
+          uid = snapshot.child(Resultset.Faculty).val();
+
         pathRef_to_fetch_courseName = firebase.database().ref(path_to_fetch_courseName);
       // fetching course name using course code : before inserting.
       pathRef_to_fetch_courseName.once("value").then(function(snapshot) {
@@ -216,9 +219,10 @@ function facultyFilter(value , path) {
 
           // adding the lecture at individual faculty code keyed node.
           // it already exsits.
-
-          let store1_pathRef = firebase.database().ref("/Users/"+Resultset.Faculty+"/Lectures/"+schedule_timestamp+"/LectureID-"+Resultset.id); // path to set.
-          let verify2_checkRef = firebase.database().ref("/Users/"+Resultset.Faculty+"/Lectures/"+schedule_timestamp); // path for once check.
+          faculty_uidRef = "/Users/"+uid+"/Lectures/"+schedule_timestamp;
+          
+          let store1_pathRef = firebase.database().ref(faculty_uidRef+"/LectureID-"+Resultset.id); // path to set.
+          let verify2_checkRef = firebase.database().ref(faculty_uidRef); // path for on check.
           //check if Lecture already exists.
           verify2_checkRef.once("value").then(function(snapshot) {
 
