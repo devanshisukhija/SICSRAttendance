@@ -23,7 +23,7 @@ class Faculty_HomeActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
 
-        nav_view.setNavigationItemSelectedListener(this)
+        faculty_nav_view.setNavigationItemSelectedListener(this)
 
 
     }

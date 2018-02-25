@@ -10,10 +10,7 @@ import com.devanshisukhija.sicsrattendance.R
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.activity_login.*
 
 
@@ -34,15 +31,16 @@ class LoginActivity : AppCompatActivity() {
     private var mAuth: FirebaseAuth? = null
     private var mUser : FirebaseUser? = null
     private var mDatabase : FirebaseDatabase? = null
-    private var mDatabaseReference : DatabaseReference? = null
-    private var mAuthListener : FirebaseAuth.AuthStateListener? = null
+    private lateinit var mDatabaseReference : DatabaseReference
+   // private var mAuthListener : FirebaseAuth.AuthStateListener? = null
 
     //global variables
     private var emailString : String? = null
     private var passwordString : String? = null
 
-    lateinit var mValueEventListener : ValueEventListener
-    lateinit var mDataSnapshot: DataSnapshot
+    private lateinit var mValueEventListener : ValueEventListener
+    private var currentUserAuthToken : String? = null
+
 
     // ActivityState : ONCREATE.
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,13 +59,14 @@ class LoginActivity : AppCompatActivity() {
         mUser = mAuth?.currentUser
 
 
+
     }
     //ActivityState : ONSTART.
     override fun onStart() {
         super.onStart()
 
         //[START auth_state_listener]
-        mAuth?.addAuthStateListener(mAuthListener!!)
+       // mAuth?.addAuthStateListener(mAuthListener!!)
     }
     //ActivityState : ONPAUSE.
     override fun onPause() {
@@ -90,31 +89,44 @@ class LoginActivity : AppCompatActivity() {
              mAuth!!.signInWithEmailAndPassword(emailString!!, passwordString!!).addOnCompleteListener(this) { task ->
 
                  if(task.isSuccessful) {
-                        val uid = mUser!!.uid
-                     // function call for checking the user.
-                        var ref = mDatabaseReference?.child("Users")?.child("Faculty")
+                     if(mUser != null) {
+                         val currentUserAuthToken = mUser!!.uid
+                         // function call for checking the user.
+                         val ref = mDatabaseReference.child("Users").child("authTokenCheck")
 
-                    // { Here below, trying retrive a key by its value.
-                     ref?.addValueEventListener(mValueEventListener)
-                     mValueEventListener.onDataChange(mDataSnapshot)
-                     mDataSnapshot.children.forEach {
-                         if (it.value == uid) {
-                             Log.d("", it.key)
+                         //Here below, trying retrive a key by its value.
+                         mValueEventListener = object : ValueEventListener {
+                             override fun onCancelled(mDatabaseError: DatabaseError?) {
+                                 val err = mDatabaseError.toString()
+                                 Log.d("NONONONONONO", err)
+
+                             }
+
+                             override fun onDataChange(mDataSnapshot: DataSnapshot?) {
+
+                                 mDataSnapshot?.children?.forEach {
+                                     if (it.child(currentUserAuthToken).exists()) {
+                                         val role = it.child(currentUserAuthToken).child("role").value.toString()
+                                         Log.d("YOYOYOYOOYOYOY", role)
+                                     } else {
+                                         Log.d("NONONOO", "try again : " + it.child(currentUserAuthToken).child("role").value)
+                                     }
+                                 }
+                             }
+
                          }
-                         else {
-                             Log.d("WOWOWO", " nononononono")
-                         }
+                         ref.addValueEventListener(mValueEventListener)
+
+
                      }
-
                  } else {
 
                      Log.e(TAG, "signInWithEmail:failure", task.exception)
-                     Toast.makeText(this@LoginActivity, "Authentication failed. Make sure email and password are correct",
-                             Toast.LENGTH_SHORT).show()
+                     Toast.makeText(this@LoginActivity, "Authentication failed. Make sure email and password are correct",Toast.LENGTH_SHORT).show()
                  }
              } // <-----------------End of SignInwithEmailandPassword func.-------------------------->
 
-         } else {
+         }else {
              Toast.makeText(this, "Email or Password can not be empty.", Toast.LENGTH_LONG).show()
          } // <----------------End of isOrnot email and password Empty condition.------------------------->
     } //<----------------------End of Login Button clicked.------------>

@@ -4,16 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.devanshisukhija.sicsrattendance.Controller.Student_homeActivity">
+    tools:context="com.devanshisukhija.sicsrattendance.Controller.Faculty_HomeActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/sicsrYellow"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:theme="@style/AppTheme.AppBarOverlay"
+        android:background="@color/sicsrYellow">
 
         <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
+            android:id="@+id/student_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:title=" "
@@ -28,10 +28,12 @@
                 android:contentDescription="@string/nav_header_img" />
 
         </android.support.v7.widget.Toolbar>
-
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_student_home" />
+    <include
+        layout="@layout/content_student_home" />
+
 
 
 </android.support.design.widget.CoordinatorLayout>
+

@@ -29,4 +29,5 @@
     <string name="status">Status</string>
     <string name="semester">Semester</string>
     <string name="title_activity_student_home">Student_homeActivity</string>
+    <string name="seeting_image_on_student_nav">seeting image on student nav</string>
 </resources>

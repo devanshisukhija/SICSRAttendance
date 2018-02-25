@@ -10,7 +10,7 @@
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
     <TextView
-        android:id="@+id/nav_header_name"
+        android:id="@+id/student_nav_header_name"
         android:layout_width="199dp"
         android:layout_height="42dp"
         android:layout_marginEnd="8dp"
@@ -26,49 +26,54 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Farhana Desai" />
 
-    <TextView
-        android:id="@+id/nav_header_email"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="16dp"
-        android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/nav_header_name"
-        tools:text="farhana.desai@sicsr.ac.in" />
-
     <ImageButton
-        android:id="@+id/nav_header_setting"
+        android:id="@+id/student_nav_header_setting"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginTop="8dp"
         android:background="@color/sicsrYellow"
-        android:onClick="nav_header_setting_clicked"
+        android:onClick="student_nav_header_setting_clicked"
         android:scaleType="centerCrop"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/nav_header_email"
+        app:layout_constraintTop_toBottomOf="@+id/student_nav_header_email"
         app:srcCompat="@drawable/ic_001_settings"
-        android:contentDescription="@string/nav_header_setting_image_button" />
+        android:contentDescription="@string/seeting_image_on_student_nav" />
 
     <Button
-        android:id="@+id/nav_header_logout"
+        android:id="@+id/student_nav_header_logout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:background="@color/sicsrYellow"
-        android:onClick="nav_header_logout_clicked"
+        android:onClick="student_nav_header_logout_clicked"
         android:text="@string/logout"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/nav_header_email" />
+        app:layout_constraintTop_toBottomOf="@+id/student_nav_header_email" />
+
+    <TextView
+        android:id="@+id/student_nav_header_email"
+        android:layout_width="wrap_content"
+        android:layout_height="23dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/student_nav_header_logout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/student_nav_header_name"
+        tools:text="farhana.desai@sicsr.ac.in"
+        tools:ignore="RtlHardcoded" />
 
 </android.support.constraint.ConstraintLayout>
