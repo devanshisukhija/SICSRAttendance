@@ -9,6 +9,7 @@ import android.view.View
 import android.widget.ProgressBar
 import android.widget.Toast
 import com.devanshisukhija.sicsrattendance.R
+import com.devanshisukhija.sicsrattendance.Services.UserDataService
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -27,110 +28,120 @@ import kotlinx.android.synthetic.main.activity_login.*
 class LoginActivity : AppCompatActivity() {
 
     val TAG = "LoginActivity"
-
-    // Firebase references for Authentication.
+    //[Firebase initialing]
     private var mAuth: FirebaseAuth? = null
     private var mUser : FirebaseUser? = null
     private var mDatabase : FirebaseDatabase? = null
     private lateinit var mDatabaseReference : DatabaseReference
-
-    //global variables
+    //[Instance of DatabaseHelper object.]
+    private var databaseHelper : DatabaseHelper = DatabaseHelper
+    //[Instance of UserDataService class.]
+    private val user_data_service : UserDataService = UserDataService
+    //[Global variables]
     private var emailString : String? = null
     private var passwordString : String? = null
-
+    //[ValueEventListen]
     private lateinit var mValueEventListener : ValueEventListener
-    private var currentUserAuthToken : String? = null
 
 
-    // ActivityState : ONCREATE.
+    // [Start : of onCreate]  --> func#1
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
         if (!FirebaseApp.getApps(this@LoginActivity).isEmpty()) {
-            FirebaseDatabase.getInstance().setPersistenceEnabled(true)
+            databaseHelper.isPersistenceEnable = true
+            databaseHelper.instance
         }
-        //Initializing firebase Auth and database Reference.
+        //[Declaration]
         mAuth = FirebaseAuth.getInstance()
-        mDatabase = DatabaseHelper.getInstance()
+        mDatabase = DatabaseHelper.instance
         mDatabaseReference = FirebaseDatabase.getInstance().reference
-        // Getting the currently logged in user.
+        //[Returns the currently logged in user.]
         mUser = mAuth?.currentUser
-        //Login Spinners
-        var loginSpinner = findViewById<ProgressBar>(R.id.loginSpinner)
-        loginSpinner.visibility = View.INVISIBLE
-    }
 
-    // function for when the login button is clicked.
-    // TODO : Login Activity : Function# 1.
-     fun loginBtnClicked(view : View) {
+        //[Login Spinners]
+        val loginSpinner = findViewById<ProgressBar>(R.id.loginSpinner)
+        loginSpinner.visibility = View.INVISIBLE
+    }//[End : of OnCreate]
+
+
+    //[Start : Function for when the Login Btn is click.]  --> func# 2
+      fun loginBtnClicked(view : View) {
+         //[Unique ID of currently logged in user.]
+         val currentUserAuthToken = mUser?.uid
          enableSpinner(true)
+         //[Variable Declaration]
          emailString = loginEmailTxt.text.toString()
          passwordString = loginPasswordtxt.text.toString()
 
+         //[Condition for Null or Empty email and password.]
          if(!emailString.isNullOrEmpty() && !passwordString.isNullOrEmpty()) {
-             // Checking if the login cridentials are correct. and then changing the Auth State to logged in.
-             //TODO : Login Activity : Function# 3.
+             // [Start : signInWithEmailAndPassword] --> func# 3
              mAuth!!.signInWithEmailAndPassword(emailString!!, passwordString!!).addOnCompleteListener(this) { task ->
                  if(task.isSuccessful) {
-                     if(mUser != null) {
-                         val currentUserAuthToken = mUser!!.uid
-                         val ref = mDatabaseReference.child("Users").child("authTokenCheck")
-                         // initializing "mValueEventListener"
-                         mValueEventListener = object : ValueEventListener {
-
-                             override fun onCancelled(mDatabaseError: DatabaseError?) {
-                                 val err = mDatabaseError.toString()
-                                 enableSpinner(false)
-                                 Toast.makeText(this@LoginActivity, "Sever issue, Re-login please!", Toast.LENGTH_LONG).show()
-                                 Log.d("VEL:Error : ", err)
-                             }
-
-                             override fun onDataChange(mDataSnapshot: DataSnapshot?) {
-
-                                 mDataSnapshot?.children?.forEach {
-                                     val role : String? = it.child("role").value.toString()
-                                     if (it.key.toString() == currentUserAuthToken) {
-                                         Log.d("VEL:success" , "passing role :"+ role + "to function for intent")
-                                         if(role != null) {
-                                             enableSpinner(false)
-                                             intent_to_roleActivity(role)
-                                         }
-                                     } else {
-                                         enableSpinner(false)
-                                         Toast.makeText(this@LoginActivity, "Authorization error", Toast.LENGTH_LONG).show()
-                                         //TODO : add code
-                                     }
-                                 }
-                             }
-                         }
-                         ref.addValueEventListener(mValueEventListener)
-                     }
+                     if(mUser != null && currentUserAuthToken !=null) { //[Null Check for current user and it uid.]
+                         //[Call to UserDataService storeUserData func. --> trigger# 1.]
+                         user_data_service.storeUserData(currentUserAuthToken) { complete ->
+                             when(complete) {
+                                 true -> checkUsertype()
+                                 false -> { enableSpinner(false)
+                                     Toast.makeText(this@LoginActivity, "Authentication failed. Try again!",Toast.LENGTH_LONG).show()
+                                 } //[End : false]
+                             }//[End : when(complete)]
+                         }//[End : of trigger# 1]
+                     }//[End : of inner Null check.]
                  } else {
                      enableSpinner(false)
                      Log.e(TAG, "signInWithEmail:failure", task.exception)
-                     Toast.makeText(this@LoginActivity, "Authentication failed. Make sure email and password are correct",Toast.LENGTH_SHORT).show()
+                     Toast.makeText(this@LoginActivity, "Authentication failed. Make sure email and password are correct",Toast.LENGTH_LONG).show()
                  }
-             } // [End of SignInwithEmailandPassword func]
-         }else {
+             } //[End of signInWithEmailAndPassword func]
+         }else { //[End > Start : Email and Password Null check condition.]
              Toast.makeText(this, "Email or Password can not be empty.", Toast.LENGTH_LONG).show()
              enableSpinner(false)
-         } //[End of isOrnot email and password Empty condition]
-    } //[End of Login Button clicked]
+         }
+    } //[End : of Login Button clicked]
 
-    // TODO : Login Activity : Function#2
+    //[Start : of function for AlertDialog Box inflation at 'getHellp' image.] --> func# 4.
      fun getHelpImgClicked(view : View) {
         val builder = AlertDialog.Builder(this)
         val dialogView = layoutInflater.inflate(R.layout.get_help_dialog, null)
         builder.setView(dialogView)
-                .setNegativeButton("Close" ){ _, _ -> }.show()
-        }
+                .setNegativeButton("Close") { _, _ -> }.show()
+    }//[End : func# 4.]
 
-    //TODO : Login Activity : Function#3
+    //[Start : of function to check the role of currently logged in user.] --> func# 5.
     fun checkUsertype() {
-    }
+        val currentUserAuthToken = mUser?.uid
+        val ref = mDatabaseReference.child("Users").child("authTokenCheck")
 
+        // initializing "mValueEventListener"
+        mValueEventListener = object : ValueEventListener {
+            override fun onCancelled(mDatabaseError: DatabaseError?) {
+                val err = mDatabaseError.toString()
+                enableSpinner(false)
+                Log.d("VEL:Error : ", err)
+            }
+            override fun onDataChange(mDataSnapshot: DataSnapshot?) {
+                mDataSnapshot?.children?.forEach {
+                    val role : String? = it.child("role").value.toString()
+                    if (it.key.toString() == currentUserAuthToken) {
+                        if(mUser != null && role != null) {  //[Start : of Null Check]
+                            enableSpinner(false)
+                            intent_to_roleActivity(role)
+                        }//[End : of ^ Null Check.]
+                    } else {
+                        enableSpinner(false)
+                        //TODO : add code
+                    }//[End : ^ else]
+                }//[End : of foreach DataSnapShot]
+            }//[End : of onDataChange]
+        } //[End : mValueEventListener]
+        ref.addValueEventListener(mValueEventListener)
+    } //[End : func# 5]
+
+    //[Start : of Function to redirect users to their respective activities.] --> func# 6
     fun intent_to_roleActivity( role : String){
-            val role = role
             if (role == "student") {
                 val role_intent = Intent(this, Student_homeActivity::class.java)
                 finish()
@@ -140,24 +151,21 @@ class LoginActivity : AppCompatActivity() {
                 finish()
                 startActivity(role_intent)
             } else {
-                //TODO : dont know what to put here
+                Toast.makeText(this, "Authorisation Error.", Toast.LENGTH_LONG).show()
             }
-    }
+    }//[End : func# 6]
 
+    //[Start : of Enable Spinner Function] --> func# 7
     fun enableSpinner (enable  : Boolean) {
-        var loginSpinner = findViewById<ProgressBar>(R.id.loginSpinner)
-
+        val loginSpinner = findViewById<ProgressBar>(R.id.loginSpinner)
         if(enable) {
             loginSpinner.visibility = View.VISIBLE
         } else {
             loginSpinner.visibility = View.INVISIBLE
         }
-
+        //[Enabling Spinner on Login Btn.]
         loginLoginBtn.isEnabled = true
-    }
-
-
-
+    }//[End : func# 7]
 }
 
 

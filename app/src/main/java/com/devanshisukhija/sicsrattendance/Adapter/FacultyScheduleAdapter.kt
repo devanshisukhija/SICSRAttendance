@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TableRow
 import android.widget.TextView
-import com.devanshisukhija.sicsrattendance.Model.FacultyScheduleLecture
+import com.devanshisukhija.sicsrattendance.Model.ScheduledLectures
 import com.devanshisukhija.sicsrattendance.R
 import java.text.ParseException
 import java.text.SimpleDateFormat
@@ -18,9 +18,7 @@ package com.devanshisukhija.sicsrattendance.Adapter
 *
 */
 
-
-
-class FacultyScheduleAdapter(val context : Context, val scheduled_lecture : ArrayList<FacultyScheduleLecture>) : RecyclerView.Adapter<FacultyScheduleAdapter.ViewHolder>() {
+class FacultyScheduleAdapter(val context : Context, val scheduled_lecture : ArrayList<ScheduledLectures>) : RecyclerView.Adapter<FacultyScheduleAdapter.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder{
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
@@ -44,7 +42,7 @@ class FacultyScheduleAdapter(val context : Context, val scheduled_lecture : Arra
         val venue = itemView?.findViewById<TextView>(R.id.lecture_room_column)
 
 
-        fun bindRows(context: Context, lecture: FacultyScheduleLecture) {
+        fun bindRows(context: Context, lecture: ScheduledLectures) {
 
             program?.text = lecture.program
             course?.text = lecture.course_name
@@ -70,12 +68,9 @@ class FacultyScheduleAdapter(val context : Context, val scheduled_lecture : Arra
             } catch (e : ParseException) {
                 Log.d("PARSE" , "EXC:  can not parse date")
             }
-
             val outDateString = SimpleDateFormat("E, h:mm a", Locale.getDefault())
             return outDateString.format(converterDate)
         }
     }
-
-
 }
 

@@ -4,6 +4,8 @@ import android.app.Application
 
 class App : Application() {
 
+
+
     override fun onCreate() {
         super.onCreate()
 
@@ -13,5 +15,8 @@ class App : Application() {
 //                .setDatabaseUrl("https://sicsr-d4771.firebaseio.com")
 //                .build()
 //            FirebaseApp.initializeApp(this, options)
-    }
+
+   }
+
+
 }
