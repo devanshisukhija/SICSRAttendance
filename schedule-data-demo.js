@@ -114,31 +114,6 @@ function feedDatainFirebase(value){
       //this variable can be null, for it to be not null, select semester and course should match when making time-table.
       fetched_courseName = snapshot.child(Resultset.Course).val();
 
-      //Store path at  batch->program->semester->division->course->timestamp->lectureid-> lecture_info
-      let store1_pathRef = firebase.database().ref(path+"/LectureID-"+Resultset.id);
-      // check path at batch->program->semester->division->course->timestamp
-      let verify1_checkRef = firebase.database().ref(path);
-      verify1_checkRef.once("value").then(function(snapshot){
-        var dataExists = snapshot.child("LectureID-"+Resultset.id).exists();
-        if(!dataExists) {
-          store1_pathRef.set ({
-            course_code: Resultset.Course,
-            course_name : fetched_courseName,
-            batch_name : Resultset.Batch,
-            division : Resultset.Division,
-            sem : Resultset.Semester,
-            program_name : Resultset.Program,
-            room_number : Resultset.room_id,
-            start_time : updated_start_time,
-            end_time : updated_end_time,
-            teacher_name : Resultset.Faculty,
-            timestamp : schedule_timestamp
-          });
-        } else { }
-      }).catch(function(error) {
-        console.error(error);
-      });
-
       //check Ref: /Lectures/timestamp
       let verify2_checkRef = firebase.database().ref("Lectures/"+schedule_timestamp);
       verify2_checkRef.once("value").then(function(snapshot){
@@ -164,6 +139,32 @@ function feedDatainFirebase(value){
       }).catch(function(error) {
         console.error(error);
       });
+
+      //Store path at  batch->program->semester->division->course->timestamp->lectureid-> lecture_info
+      let store1_pathRef = firebase.database().ref(path);
+      // check path at batch->program->semester->division->course->timestamp
+      let verify1_checkRef = firebase.database().ref("Lectures");
+      verify1_checkRef.once("value").then(function(snapshot){
+        var dataExists = snapshot.child("LectureID-"+Resultset.id).exists();
+        if(!dataExists) {
+          store1_pathRef.push({
+            course_code: Resultset.Course,
+            course_name : fetched_courseName,
+            batch_name : Resultset.Batch,
+            division : Resultset.Division,
+            sem : Resultset.Semester,
+            program_name : Resultset.Program,
+            room_number : Resultset.room_id,
+            start_time : updated_start_time,
+            end_time : updated_end_time,
+            teacher_name : Resultset.Faculty,
+            timestamp : schedule_timestamp
+          });
+        } else { }
+      }).catch(function(error) {
+        console.error(error);
+      });
+
     }).catch(function(error) {
       console.error(error);
     });
@@ -220,9 +221,9 @@ function facultyFilter(value , path) {
           // adding the lecture at individual faculty code keyed node.
           // it already exsits.
           faculty_uidRef = "/Users/"+uid+"/Lectures/"+schedule_timestamp;
-          
-          let store1_pathRef = firebase.database().ref(faculty_uidRef+"/LectureID-"+Resultset.id); // path to set.
-          let verify2_checkRef = firebase.database().ref(faculty_uidRef); // path for on check.
+
+          let store1_pathRef = firebase.database().ref(faculty_uidRef); // path to set.
+          let verify2_checkRef = firebase.database().ref("Lectures"); // path for on check.
           //check if Lecture already exists.
           verify2_checkRef.once("value").then(function(snapshot) {
 
@@ -232,7 +233,7 @@ function facultyFilter(value , path) {
               //TODO : not sure about break functionality:
 
             } else {
-              store1_pathRef.set({
+              store1_pathRef.push({
                 course_code: Resultset.Course,
                 course_name : fetched_courseName,
                 batch_name : Resultset.Batch,
