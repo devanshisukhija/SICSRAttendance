@@ -1,10 +1,12 @@
 package com.devanshisukhija.sicsrattendance.Controller
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
+import android.widget.ProgressBar
 import android.widget.Toast
 import com.devanshisukhija.sicsrattendance.R
 import com.google.firebase.FirebaseApp
@@ -12,6 +14,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.activity_login.*
+
 
 
 /**
@@ -24,15 +27,12 @@ import kotlinx.android.synthetic.main.activity_login.*
 class LoginActivity : AppCompatActivity() {
 
     val TAG = "LoginActivity"
-    //private var mDatabaseReference: DatabaseReference? = null
-    //private var mDatabase: FirebaseDatabase? = null
 
-    // Firebase refferences for Authentication.
+    // Firebase references for Authentication.
     private var mAuth: FirebaseAuth? = null
     private var mUser : FirebaseUser? = null
     private var mDatabase : FirebaseDatabase? = null
     private lateinit var mDatabaseReference : DatabaseReference
-   // private var mAuthListener : FirebaseAuth.AuthStateListener? = null
 
     //global variables
     private var emailString : String? = null
@@ -46,91 +46,76 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-
         if (!FirebaseApp.getApps(this@LoginActivity).isEmpty()) {
             FirebaseDatabase.getInstance().setPersistenceEnabled(true)
         }
-
-        // initializing firebase Auth and database Reference.
+        //Initializing firebase Auth and database Reference.
         mAuth = FirebaseAuth.getInstance()
         mDatabase = DatabaseHelper.getInstance()
         mDatabaseReference = FirebaseDatabase.getInstance().reference
-        // getting the currently logined user.
+        // Getting the currently logged in user.
         mUser = mAuth?.currentUser
-
-
-
-    }
-    //ActivityState : ONSTART.
-    override fun onStart() {
-        super.onStart()
-
-        //[START auth_state_listener]
-       // mAuth?.addAuthStateListener(mAuthListener!!)
-    }
-    //ActivityState : ONPAUSE.
-    override fun onPause() {
-        super.onPause()
-
-
+        //Login Spinners
+        var loginSpinner = findViewById<ProgressBar>(R.id.loginSpinner)
+        loginSpinner.visibility = View.INVISIBLE
     }
 
     // function for when the login button is clicked.
     // TODO : Login Activity : Function# 1.
      fun loginBtnClicked(view : View) {
-
+         enableSpinner(true)
          emailString = loginEmailTxt.text.toString()
          passwordString = loginPasswordtxt.text.toString()
 
          if(!emailString.isNullOrEmpty() && !passwordString.isNullOrEmpty()) {
-
              // Checking if the login cridentials are correct. and then changing the Auth State to logged in.
              //TODO : Login Activity : Function# 3.
              mAuth!!.signInWithEmailAndPassword(emailString!!, passwordString!!).addOnCompleteListener(this) { task ->
-
                  if(task.isSuccessful) {
                      if(mUser != null) {
                          val currentUserAuthToken = mUser!!.uid
-                         // function call for checking the user.
                          val ref = mDatabaseReference.child("Users").child("authTokenCheck")
-
-                         //Here below, trying retrive a key by its value.
+                         // initializing "mValueEventListener"
                          mValueEventListener = object : ValueEventListener {
+
                              override fun onCancelled(mDatabaseError: DatabaseError?) {
                                  val err = mDatabaseError.toString()
-                                 Log.d("NONONONONONO", err)
-
+                                 enableSpinner(false)
+                                 Toast.makeText(this@LoginActivity, "Sever issue, Re-login please!", Toast.LENGTH_LONG).show()
+                                 Log.d("VEL:Error : ", err)
                              }
 
                              override fun onDataChange(mDataSnapshot: DataSnapshot?) {
 
                                  mDataSnapshot?.children?.forEach {
-                                     if (it.child(currentUserAuthToken).exists()) {
-                                         val role = it.child(currentUserAuthToken).child("role").value.toString()
-                                         Log.d("YOYOYOYOOYOYOY", role)
+                                     val role : String? = it.child("role").value.toString()
+                                     if (it.key.toString() == currentUserAuthToken) {
+                                         Log.d("VEL:success" , "passing role :"+ role + "to function for intent")
+                                         if(role != null) {
+                                             enableSpinner(false)
+                                             intent_to_roleActivity(role)
+                                         }
                                      } else {
-                                         Log.d("NONONOO", "try again : " + it.child(currentUserAuthToken).child("role").value)
+                                         enableSpinner(false)
+                                         Toast.makeText(this@LoginActivity, "Authorization error", Toast.LENGTH_LONG).show()
+                                         //TODO : add code
                                      }
                                  }
                              }
-
                          }
                          ref.addValueEventListener(mValueEventListener)
-
-
                      }
                  } else {
-
+                     enableSpinner(false)
                      Log.e(TAG, "signInWithEmail:failure", task.exception)
                      Toast.makeText(this@LoginActivity, "Authentication failed. Make sure email and password are correct",Toast.LENGTH_SHORT).show()
                  }
-             } // <-----------------End of SignInwithEmailandPassword func.-------------------------->
-
+             } // [End of SignInwithEmailandPassword func]
          }else {
              Toast.makeText(this, "Email or Password can not be empty.", Toast.LENGTH_LONG).show()
-         } // <----------------End of isOrnot email and password Empty condition.------------------------->
-    } //<----------------------End of Login Button clicked.------------>
-
+             enableSpinner(false)
+         } //[End of isOrnot email and password Empty condition]
+    } //[End of Login Button clicked]
 
     // TODO : Login Activity : Function#2
      fun getHelpImgClicked(view : View) {
@@ -138,15 +123,38 @@ class LoginActivity : AppCompatActivity() {
         val dialogView = layoutInflater.inflate(R.layout.get_help_dialog, null)
         builder.setView(dialogView)
                 .setNegativeButton("Close" ){ _, _ -> }.show()
-
         }
 
     //TODO : Login Activity : Function#3
     fun checkUsertype() {
-
-
     }
 
+    fun intent_to_roleActivity( role : String){
+            val role = role
+            if (role == "student") {
+                val role_intent = Intent(this, Student_homeActivity::class.java)
+                finish()
+                startActivity(role_intent)
+            } else if (role == "faculty") {
+                val role_intent = Intent(this, Faculty_HomeActivity::class.java)
+                finish()
+                startActivity(role_intent)
+            } else {
+                //TODO : dont know what to put here
+            }
+    }
+
+    fun enableSpinner (enable  : Boolean) {
+        var loginSpinner = findViewById<ProgressBar>(R.id.loginSpinner)
+
+        if(enable) {
+            loginSpinner.visibility = View.VISIBLE
+        } else {
+            loginSpinner.visibility = View.INVISIBLE
+        }
+
+        loginLoginBtn.isEnabled = true
+    }
 
 
 
