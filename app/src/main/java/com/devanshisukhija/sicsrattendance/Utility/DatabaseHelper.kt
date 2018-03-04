@@ -1,4 +1,4 @@
-package com.devanshisukhija.sicsrattendance.Controller
+package com.devanshisukhija.sicsrattendance.Utility
 
 import com.google.firebase.database.FirebaseDatabase
 

@@ -1,17 +1,24 @@
 package com.devanshisukhija.sicsrattendance.Controller
 
+import FacultyScheduleAdapter
 import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.LinearLayoutManager
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import com.devanshisukhija.sicsrattendance.R
+import com.devanshisukhija.sicsrattendance.Services.UpdateScheduledLecturesService
 import kotlinx.android.synthetic.main.activity_faculty__home.*
 import kotlinx.android.synthetic.main.app_bar_faculty__home.*
+import kotlinx.android.synthetic.main.content_faculty__home.*
 
 class Faculty_HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+
+    lateinit var adapter : FacultyScheduleAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,6 +32,8 @@ class Faculty_HomeActivity : AppCompatActivity(), NavigationView.OnNavigationIte
 
         faculty_nav_view.setNavigationItemSelectedListener(this)
 
+        setupAdapters()
+
 
     }
 
@@ -33,6 +42,24 @@ class Faculty_HomeActivity : AppCompatActivity(), NavigationView.OnNavigationIte
             drawer_layout.closeDrawer(GravityCompat.START)
         } else {
             super.onBackPressed()
+        }
+    }
+
+    private fun setupAdapters() {
+        if(UpdateScheduledLecturesService.lectures.isNotEmpty()){
+            UpdateScheduledLecturesService.lectures.clear()
+            UpdateScheduledLecturesService.getLectures { complete ->
+                when (complete) {
+                    true -> {
+                        adapter = FacultyScheduleAdapter(this ,UpdateScheduledLecturesService.lectures)
+                        faculty_recyclerview.adapter = adapter
+                        val layoutManager = LinearLayoutManager(this)
+                        faculty_recyclerview.layoutManager = layoutManager
+                        faculty_recyclerview.setHasFixedSize(true)
+                    }
+                    false -> Log.d("Fail" , "58,Faculty_home")
+                }
+            }
         }
     }
 

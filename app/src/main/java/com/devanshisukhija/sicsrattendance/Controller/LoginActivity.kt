@@ -9,13 +9,14 @@ import android.view.View
 import android.widget.ProgressBar
 import android.widget.Toast
 import com.devanshisukhija.sicsrattendance.R
+import com.devanshisukhija.sicsrattendance.Services.UpdateScheduledLecturesService
 import com.devanshisukhija.sicsrattendance.Services.UserDataService
+import com.devanshisukhija.sicsrattendance.Utility.DatabaseHelper
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.activity_login.*
-
 
 
 /**
@@ -83,7 +84,8 @@ class LoginActivity : AppCompatActivity() {
                          //[Call to UserDataService storeUserData func. --> trigger# 1.]
                          user_data_service.storeUserData(currentUserAuthToken) { complete ->
                              when(complete) {
-                                 true -> checkUsertype()
+                                 true -> {checkUsertype()
+                                     Log.d("hkjhkjhkjb", "yoyiuouou")}
                                  false -> { enableSpinner(false)
                                      Toast.makeText(this@LoginActivity, "Authentication failed. Try again!",Toast.LENGTH_LONG).show()
                                  } //[End : false]
@@ -142,17 +144,25 @@ class LoginActivity : AppCompatActivity() {
 
     //[Start : of Function to redirect users to their respective activities.] --> func# 6
     fun intent_to_roleActivity( role : String){
-            if (role == "student") {
-                val role_intent = Intent(this, Student_homeActivity::class.java)
-                finish()
-                startActivity(role_intent)
-            } else if (role == "faculty") {
-                val role_intent = Intent(this, Faculty_HomeActivity::class.java)
-                finish()
-                startActivity(role_intent)
-            } else {
-                Toast.makeText(this, "Authorisation Error.", Toast.LENGTH_LONG).show()
+        UpdateScheduledLecturesService.getLectures { complete ->
+            when (complete) {
+                true -> {Log.d("Inent" , "complete ")
+                    if (role == "student") {
+                        val role_intent = Intent(this, Student_homeActivity::class.java)
+                        finish()
+                        startActivity(role_intent)
+                    } else if (role == "faculty") {
+                        val role_intent = Intent(this, Faculty_HomeActivity::class.java)
+                        finish()
+                        startActivity(role_intent)
+                    } else {
+                        Toast.makeText(this, "Authorisation Error.", Toast.LENGTH_LONG).show()
+                    }
+                }
+                false -> Toast.makeText(this, "Could not fetch data, try again!!", Toast.LENGTH_LONG).show()
             }
+        }
+
     }//[End : func# 6]
 
     //[Start : of Enable Spinner Function] --> func# 7
