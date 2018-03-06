@@ -9,7 +9,6 @@ import android.view.View
 import android.widget.ProgressBar
 import android.widget.Toast
 import com.devanshisukhija.sicsrattendance.R
-import com.devanshisukhija.sicsrattendance.Services.UpdateScheduledLecturesService
 import com.devanshisukhija.sicsrattendance.Services.UserDataService
 import com.devanshisukhija.sicsrattendance.Utility.DatabaseHelper
 import com.google.firebase.FirebaseApp
@@ -63,6 +62,8 @@ class LoginActivity : AppCompatActivity() {
         //[Login Spinners]
         val loginSpinner = findViewById<ProgressBar>(R.id.loginSpinner)
         loginSpinner.visibility = View.INVISIBLE
+        //[Clearing lectures to display]
+        //UpdateScheduledLecturesService.lectures.clear()
     }//[End : of OnCreate]
 
 
@@ -84,8 +85,7 @@ class LoginActivity : AppCompatActivity() {
                          //[Call to UserDataService storeUserData func. --> trigger# 1.]
                          user_data_service.storeUserData(currentUserAuthToken) { complete ->
                              when(complete) {
-                                 true -> {checkUsertype()
-                                     Log.d("hkjhkjhkjb", "yoyiuouou")}
+                                 true -> checkUsertype()
                                  false -> { enableSpinner(false)
                                      Toast.makeText(this@LoginActivity, "Authentication failed. Try again!",Toast.LENGTH_LONG).show()
                                  } //[End : false]
@@ -128,6 +128,7 @@ class LoginActivity : AppCompatActivity() {
                 mDataSnapshot?.children?.forEach {
                     val role : String? = it.child("role").value.toString()
                     if (it.key.toString() == currentUserAuthToken) {
+                        Log.d("TEST : ", "Current Uid matched Uid in database")
                         if(mUser != null && role != null) {  //[Start : of Null Check]
                             enableSpinner(false)
                             intent_to_roleActivity(role)
@@ -144,25 +145,18 @@ class LoginActivity : AppCompatActivity() {
 
     //[Start : of Function to redirect users to their respective activities.] --> func# 6
     fun intent_to_roleActivity( role : String){
-        UpdateScheduledLecturesService.getLectures { complete ->
-            when (complete) {
-                true -> {Log.d("Inent" , "complete ")
-                    if (role == "student") {
-                        val role_intent = Intent(this, Student_homeActivity::class.java)
-                        finish()
-                        startActivity(role_intent)
-                    } else if (role == "faculty") {
-                        val role_intent = Intent(this, Faculty_HomeActivity::class.java)
-                        finish()
-                        startActivity(role_intent)
-                    } else {
-                        Toast.makeText(this, "Authorisation Error.", Toast.LENGTH_LONG).show()
-                    }
-                }
-                false -> Toast.makeText(this, "Could not fetch data, try again!!", Toast.LENGTH_LONG).show()
-            }
+        Log.d("TEST : ", "Role passed to func# 6 intent_to_roleActivity" + role)
+        if (role == "student") {
+            val role_intent = Intent(this, Student_homeActivity::class.java)
+            finish()
+            startActivity(role_intent)
+        } else if (role == "faculty") {
+            val role_intent = Intent(this, Faculty_HomeActivity::class.java)
+            finish()
+            startActivity(role_intent)
+        } else {
+            Toast.makeText(this, "Authorisation Error.", Toast.LENGTH_LONG).show()
         }
-
     }//[End : func# 6]
 
     //[Start : of Enable Spinner Function] --> func# 7

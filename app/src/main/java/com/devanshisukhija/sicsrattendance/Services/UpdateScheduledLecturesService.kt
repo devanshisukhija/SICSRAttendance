@@ -31,24 +31,28 @@ object UpdateScheduledLecturesService {
                 }//[End : OnCancelled.]
 
                 override fun onDataChange(dataSnapshot : DataSnapshot?) {
+                    lectures.clear()
                     if(dataSnapshot?.children != null){
                            dataSnapshot.children.forEach{ it ->
-                               var start_time = it.child("start_time").value.toString()
-                               var end_time = it.child("end_time").value.toString()
-                               var batch = it.child("batch_name").value.toString()
-                               var course = it.child("course_name").value.toString()
-                               var course_code = it.child("course_code").value.toString()
-                               var semester = it.child("sem").value.toString()
-                               var faculty = it.child("teacher_name").value.toString()
-                               var division = it.child("division").value.toString()
-                               var room_name = it.child("room_number").value.toString()
-                               var timestamp = it.child("timestamp").value.toString()
-                               var program = it.child("program_name").value.toString()
-                               var lecture_id = it.child("lectureId").value.toString()
+                               val start_time = it.child("start_time").value.toString()
+                               val end_time = it.child("end_time").value.toString()
+                               val batch = it.child("batch_name").value.toString()
+                               val course = it.child("course_name").value.toString()
+                               val course_code = it.child("course_code").value.toString()
+                               val semester = it.child("sem").value.toString()
+                               val faculty = it.child("teacher_name").value.toString()
+                               val division = it.child("division").value.toString()
+                               val room_name = it.child("room_number").value.toString()
+                               val timestamp = it.child("timestamp").value.toString()
+                               val program = it.child("program_name").value.toString()
+                               val lecture_id = it.child("lectureId").value.toString()
 
-                               val new_lecture = ScheduledLectures(start_time, end_time, course_code, course, room_name, timestamp, program, batch,semester, faculty, division, lecture_id)
+                               val new_lecture = ScheduledLectures(start_time , end_time, course_code, course, room_name, timestamp, program, batch,semester, faculty, division, lecture_id)
                                if(new_lecture != null) {
                                    lectures.add(new_lecture)
+                               }
+                               for(x in lectures) {
+                                   println(x.course_name)
                                }
                                complete(true)
                         }//[End : of outer iteration.]

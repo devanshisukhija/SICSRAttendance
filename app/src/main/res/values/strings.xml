@@ -27,7 +27,13 @@
     <string name="course">Course</string>
     <string name="venue">Venue</string>
     <string name="status">Status</string>
-    <string name="semester">Semester</string>
     <string name="title_activity_student_home">Student_homeActivity</string>
     <string name="seeting_image_on_student_nav">seeting image on student nav</string>
+    <string name="program">program</string>
+    <string name="Program">Program</string>
+    <string name="semester">Semester</string>
+    <string name="home">Home</string>
+    <string name="schedule">Schedule</string>
+    <string name="lectures">Lectures</string>
+    <string name="attendance_report">Attendance Report</string>
 </resources>

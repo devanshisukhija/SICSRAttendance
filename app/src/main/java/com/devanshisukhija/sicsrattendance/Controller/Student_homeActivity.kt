@@ -28,7 +28,6 @@ class Student_homeActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
 
-
         student_nav_view.setNavigationItemSelectedListener(this)
        // barChart.setDrawBarShadow(false)
 
@@ -42,31 +41,22 @@ class Student_homeActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         }
     }
 
-
-
-
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
-//        when (item.itemId) {
-//            R.id.nav_camera -> {
-//                // Handle the camera action
-//            }
-//            R.id.nav_gallery -> {
-//
-//            }
-//            R.id.nav_slideshow -> {
-//
-//            }
-//            R.id.nav_manage -> {
-//
-//            }
-//            R.id.nav_share -> {
-//
-//            }
-//            R.id.nav_send -> {
-//
-//            }
-//        }
+        when (item.itemId) {
+            R.id.student_sidenav_home -> {
+                // Handle the camera action
+            }
+            R.id.student_sidenav_lecture -> {
+
+            }
+            R.id.student_sidenav_schedule -> {
+
+            }
+            R.id.student_sidenav_report -> {
+
+            }
+        }
 
         drawer_layout.closeDrawer(GravityCompat.START)
         return true
