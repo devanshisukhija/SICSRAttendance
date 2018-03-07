@@ -10,11 +10,12 @@ import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import com.devanshisukhija.sicsrattendance.R
+import com.devanshisukhija.sicsrattendance.Services.FacultyDataService
 import com.devanshisukhija.sicsrattendance.Services.UpdateScheduledLecturesService
 import kotlinx.android.synthetic.main.activity_faculty__home.*
-import kotlinx.android.synthetic.main.activity_student_home.*
 import kotlinx.android.synthetic.main.app_bar_faculty__home.*
 import kotlinx.android.synthetic.main.content_faculty__home.*
+import kotlinx.android.synthetic.main.nav_header_faculty__home.*
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -24,11 +25,11 @@ class Faculty_HomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_faculty__home)
             setSupportActionBar(toolbar)
-
             val toggle = ActionBarDrawerToggle(
-                this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
-            drawer_layout.addDrawerListener(toggle)
+                this, faculty_drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
+            faculty_drawer_layout.addDrawerListener(toggle)
             toggle.syncState()
+
             //[Function call to set the Schedule Adapters]
             setupAdapters()
             //[Function call to setup UI]
@@ -37,14 +38,26 @@ class Faculty_HomeActivity : AppCompatActivity() {
 
     //[Start : func#2]
     override fun onBackPressed() {
-        if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
-            drawer_layout.closeDrawer(GravityCompat.START)
+        if (faculty_drawer_layout.isDrawerOpen(GravityCompat.START)) {
+            faculty_drawer_layout.closeDrawer(GravityCompat.START)
         } else {
             super.onBackPressed()
         }
     }//[End : func#2]
 
-     override fun onNavigationItemSelected(item: MenuItem): Boolean {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        // The action bar home/up action should open or close the drawer.
+        when (item.itemId) {
+            android.R.id.home -> {
+                faculty_drawer_layout.openDrawer(GravityCompat.START)
+                return true
+            }
+        }
+
+        return super.onOptionsItemSelected(item)
+    }
+
+      fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
         when (item.itemId) {
             R.id.faculty_sidenav_home -> {
@@ -61,7 +74,7 @@ class Faculty_HomeActivity : AppCompatActivity() {
             }
       }
 
-        drawer_layout.closeDrawer(GravityCompat.START)
+        faculty_drawer_layout.closeDrawer(GravityCompat.START)
         return true
     }
 
@@ -95,6 +108,8 @@ class Faculty_HomeActivity : AppCompatActivity() {
     fun setupUI(){
         faculty_home_dateStamp.text = getDate_of_month()
         faculty_home_dayStamp.text = getDay_of_week()
+        faculty_nav_header_name.text = FacultyDataService.name
+        faculty_nav_header_email.text = FacultyDataService.email
     }
 
     fun getDay_of_week() : String {

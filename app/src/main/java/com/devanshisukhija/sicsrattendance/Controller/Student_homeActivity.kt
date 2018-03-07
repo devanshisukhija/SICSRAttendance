@@ -24,8 +24,8 @@ class Student_homeActivity : AppCompatActivity(), NavigationView.OnNavigationIte
 
 
         val toggle = ActionBarDrawerToggle(
-                this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
-        drawer_layout.addDrawerListener(toggle)
+                this, student_drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
+        student_drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
 
         student_nav_view.setNavigationItemSelectedListener(this)
@@ -34,8 +34,8 @@ class Student_homeActivity : AppCompatActivity(), NavigationView.OnNavigationIte
     }
 
     override fun onBackPressed() {
-        if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
-            drawer_layout.closeDrawer(GravityCompat.START)
+        if (student_drawer_layout.isDrawerOpen(GravityCompat.START)) {
+            student_drawer_layout.closeDrawer(GravityCompat.START)
         } else {
             super.onBackPressed()
         }
@@ -58,7 +58,7 @@ class Student_homeActivity : AppCompatActivity(), NavigationView.OnNavigationIte
             }
         }
 
-        drawer_layout.closeDrawer(GravityCompat.START)
+        student_drawer_layout.closeDrawer(GravityCompat.START)
         return true
     }
 

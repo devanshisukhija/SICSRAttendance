@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.devanshisukhija.sicsrattendance.Controller.Faculty_HomeActivity">
+    tools:context="com.devanshisukhija.sicsrattendance.Controller.Faculty_RecordActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/faculty_appbarLayout"
@@ -31,7 +31,6 @@
         </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>
 
-    <include
-        layout="@layout/content_faculty__home" />
+    <include layout="@layout/content_faculty__record" />
 
 </android.support.design.widget.CoordinatorLayout>

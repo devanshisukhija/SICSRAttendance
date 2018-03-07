@@ -10,7 +10,7 @@
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
     <TextView
-        android:id="@+id/nav_header_name"
+        android:id="@+id/faculty_nav_header_name"
         android:layout_width="199dp"
         android:layout_height="42dp"
         android:layout_marginEnd="8dp"
@@ -27,7 +27,7 @@
         tools:text="Farhana Desai" />
 
     <TextView
-        android:id="@+id/nav_header_email"
+        android:id="@+id/faculty_nav_header_email"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
@@ -36,11 +36,11 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/nav_header_name"
+        app:layout_constraintTop_toBottomOf="@+id/faculty_nav_header_name"
         tools:text="farhana.desai@sicsr.ac.in" />
 
     <ImageButton
-        android:id="@+id/nav_header_setting"
+        android:id="@+id/faculty_nav_header_setting"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginBottom="8dp"
@@ -51,12 +51,12 @@
         android:scaleType="centerCrop"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/nav_header_email"
+        app:layout_constraintTop_toBottomOf="@+id/faculty_nav_header_email"
         app:srcCompat="@drawable/ic_001_settings"
         android:contentDescription="@string/nav_header_setting_image_button" />
 
     <Button
-        android:id="@+id/nav_header_logout"
+        android:id="@+id/faculty_nav_header_logout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
@@ -69,6 +69,6 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/nav_header_email" />
+        app:layout_constraintTop_toBottomOf="@+id/faculty_nav_header_email" />
 
 </android.support.constraint.ConstraintLayout>
