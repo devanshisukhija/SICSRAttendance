@@ -1,28 +1,33 @@
-package com.devanshisukhija.sicsrattendance.Controller
+package com.devanshisukhija.sicsrattendance.Controller.FacultyWrap
 
 import android.os.Bundle
 import android.support.design.widget.NavigationView
-import android.support.design.widget.Snackbar
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import com.devanshisukhija.sicsrattendance.R
+import com.devanshisukhija.sicsrattendance.Utility.FacultyRecordHelper
 import kotlinx.android.synthetic.main.activity_faculty__record.*
 import kotlinx.android.synthetic.main.app_bar_faculty__record.*
+import kotlinx.android.synthetic.main.content_faculty__record.*
+
+
+
+
 
 class Faculty_RecordActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
+    val TAG = "Faculty_RecordActivity"
+
+    val facultyRecordHelper = FacultyRecordHelper()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_faculty__record)
         setSupportActionBar(toolbar)
-
-        fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
-        }
 
         val toggle = ActionBarDrawerToggle(
                 this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
@@ -30,6 +35,32 @@ class Faculty_RecordActivity : AppCompatActivity(), NavigationView.OnNavigationI
         toggle.syncState()
 
         nav_view.setNavigationItemSelectedListener(this)
+
+        val previous_intent_val = intent.extras["start_record"]
+        println(previous_intent_val)
+        when(previous_intent_val){
+            true -> {
+                faculty_timer.isActivated = true
+                facultyRecordHelper.check_for_lecture() {
+                    when(it){
+                        true -> {
+                            if(facultyRecordHelper.count > 1){
+                                val builder = AlertDialog.Builder(this)
+                                val dialogView = layoutInflater.inflate(R.layout.get_help_dialog, null)
+                                builder.setView(dialogView)
+                                        .setNegativeButton("Close") { _, _ -> }.show()
+                            }
+                            else {
+
+                                Log.d(TAG, "count is less than one" )
+
+                            }
+                        }
+                        false -> Log.d(TAG, "check_for_lecture failed")
+                    }
+                }
+            }
+        }
     }
 
     override fun onBackPressed() {
@@ -59,27 +90,26 @@ class Faculty_RecordActivity : AppCompatActivity(), NavigationView.OnNavigationI
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
         when (item.itemId) {
-            R.id.nav_camera -> {
-                // Handle the camera action
-            }
-            R.id.nav_gallery -> {
+//            R.id.nav_camera -> {
+//                // Handle the camera action
+//            }
+//            R.id.nav_gallery -> {
+//
+//            }
+//            R.id.nav_slideshow -> {
+//
+//            }
+//            R.id.nav_manage -> {
+//
+//            }
+//            R.id.nav_share -> {
+//
+//            }
+//            R.id.nav_send -> {
 
             }
-            R.id.nav_slideshow -> {
-
-            }
-            R.id.nav_manage -> {
-
-            }
-            R.id.nav_share -> {
-
-            }
-            R.id.nav_send -> {
-
-            }
+//        faculty_drawer_layout.closeDrawer(GravityCompat.START)
+       return true
         }
-
-        drawer_layout.closeDrawer(GravityCompat.START)
-        return true
     }
-}
+

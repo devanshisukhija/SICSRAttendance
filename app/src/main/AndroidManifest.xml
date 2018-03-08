@@ -3,6 +3,8 @@
     package="com.devanshisukhija.sicsrattendance">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
     <application
         android:allowBackup="true"
@@ -24,7 +26,7 @@
             android:resource="@array/preloaded_fonts" />
 
         <activity
-            android:name=".Controller.Faculty_HomeActivity"
+            android:name=".Controller.FacultyWrap.Faculty_HomeActivity"
             android:label="@string/title_activity_faculty__home"
             android:theme="@style/AppTheme">
 
@@ -36,24 +38,24 @@
             <!-- </intent-filter> -->
         </activity>
         <activity
-            android:name=".Controller.Student_homeActivity"
+            android:name=".Controller.StudentWrap.Student_homeActivity"
             android:label="@string/title_activity_student_home"
             android:theme="@style/AppTheme">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+            <!--<intent-filter>-->
+                <!--<action android:name="android.intent.action.MAIN" />-->
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+                <!--<category android:name="android.intent.category.LAUNCHER" />-->
+            <!--</intent-filter>-->
         </activity>
         <activity
-            android:name=".Controller.Faculty_RecordActivity"
+            android:name=".Controller.FacultyWrap.Faculty_RecordActivity"
             android:label="@string/title_activity_faculty__record"
             android:theme="@style/AppTheme">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+            <!--<intent-filter>-->
+                <!--<action android:name="android.intent.action.MAIN" />-->
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+                <!--<category android:name="android.intent.category.LAUNCHER" />-->
+            <!--</intent-filter>-->
         </activity>
     </application>
 

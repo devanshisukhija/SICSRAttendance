@@ -1,4 +1,4 @@
-package com.devanshisukhija.sicsrattendance.Controller
+package com.devanshisukhija.sicsrattendance.Controller.StudentWrap
 
 import android.os.Bundle
 import android.support.design.widget.NavigationView
@@ -43,20 +43,20 @@ class Student_homeActivity : AppCompatActivity(), NavigationView.OnNavigationIte
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
-        when (item.itemId) {
-            R.id.student_sidenav_home -> {
-                // Handle the camera action
-            }
-            R.id.student_sidenav_lecture -> {
-
-            }
-            R.id.student_sidenav_schedule -> {
-
-            }
-            R.id.student_sidenav_report -> {
-
-            }
-        }
+//        when (item.itemId) {
+//            R.id.student_sidenav_home -> {
+//                // Handle the camera action
+//            }
+//            R.id.student_sidenav_lecture -> {
+//
+//            }
+//            R.id.student_sidenav_schedule -> {
+//
+//            }
+//            R.id.student_sidenav_report -> {
+//
+//            }
+//        }
 
         student_drawer_layout.closeDrawer(GravityCompat.START)
         return true

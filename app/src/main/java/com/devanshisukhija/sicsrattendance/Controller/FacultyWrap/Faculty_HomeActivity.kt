@@ -1,23 +1,28 @@
-package com.devanshisukhija.sicsrattendance.Controller
+package com.devanshisukhija.sicsrattendance.Controller.FacultyWrap
 
 import FacultyScheduleAdapter
+import android.content.Context
+import android.content.Intent
+import android.net.wifi.WifiManager
 import android.os.Bundle
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
+import android.text.format.Formatter
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import com.devanshisukhija.sicsrattendance.R
-import com.devanshisukhija.sicsrattendance.Services.FacultyDataService
 import com.devanshisukhija.sicsrattendance.Services.UpdateScheduledLecturesService
 import kotlinx.android.synthetic.main.activity_faculty__home.*
 import kotlinx.android.synthetic.main.app_bar_faculty__home.*
 import kotlinx.android.synthetic.main.content_faculty__home.*
-import kotlinx.android.synthetic.main.nav_header_faculty__home.*
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+
+
+
 
 class Faculty_HomeActivity : AppCompatActivity() {
         //[Start : onCreat] --> func #1
@@ -60,18 +65,18 @@ class Faculty_HomeActivity : AppCompatActivity() {
       fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
         when (item.itemId) {
-            R.id.faculty_sidenav_home -> {
-                // Handle the camera action
-            }
-            R.id.faculty_sidenav_home -> {
-
-            }
-            R.id.faculty_sidenav_lecture -> {
-
-            }
-            R.id.faculty_sidenav_schedule -> {
-
-            }
+//            R.id.faculty_sidenav_home -> {
+//                // Handle the camera action
+//            }
+//            R.id.faculty_sidenav_home -> {
+//
+//            }
+//            R.id.faculty_sidenav_lecture -> {
+//
+//            }
+//            R.id.faculty_sidenav_schedule -> {
+//
+//            }
       }
 
         faculty_drawer_layout.closeDrawer(GravityCompat.START)
@@ -105,11 +110,25 @@ class Faculty_HomeActivity : AppCompatActivity() {
 
     }
 
+    fun faculty_record_attendanc_clicked(view : View) {
+        val wifiManager = getSystemService(Context.WIFI_SERVICE) as WifiManager
+        val ip = Formatter.formatIpAddress(wifiManager.getConnectionInfo().networkId)
+        if(wifiManager.isWifiEnabled){
+            Log.d("WIFI if ", ip)
+            val record_activity_intent = Intent(this, Faculty_RecordActivity::class.java)
+            val start_recored = true
+            record_activity_intent.putExtra("start_record" , start_recored)
+            startActivity(record_activity_intent)
+        } else {
+            Log.d("WIFI else ", ip)
+        }
+    }
+
     fun setupUI(){
         faculty_home_dateStamp.text = getDate_of_month()
         faculty_home_dayStamp.text = getDay_of_week()
-        faculty_nav_header_name.text = FacultyDataService.name
-        faculty_nav_header_email.text = FacultyDataService.email
+//        faculty_nav_header_name.text = FacultyDataService.name
+//        faculty_nav_header_email.text = FacultyDataService.email
     }
 
     fun getDay_of_week() : String {

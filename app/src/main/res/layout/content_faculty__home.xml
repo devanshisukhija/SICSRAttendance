@@ -11,7 +11,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.devanshisukhija.sicsrattendance.Controller.Faculty_HomeActivity"
+    tools:context="com.devanshisukhija.sicsrattendance.Controller.FacultyWrap.Faculty_HomeActivity"
     tools:layout_editor_absoluteY="81dp"
     tools:showIn="@layout/app_bar_faculty__home">
 
@@ -85,6 +85,7 @@
 
     <Button
         android:id="@+id/faculty_home_recordAttendance"
+        android:onClick="faculty_record_attendanc_clicked"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
@@ -104,6 +105,7 @@
         android:id="@+id/horizontalScrollView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/side_nav_bar"
         android:fillViewport="false"
         android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@id/faculty_home_recordAttendance"
@@ -117,7 +119,6 @@
             android:id="@+id/faculty_table_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/button_layout"
             android:padding="5dp"
             android:stretchColumns="*">
 

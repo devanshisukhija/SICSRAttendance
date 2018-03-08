@@ -5,18 +5,26 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.devanshisukhija.sicsrattendance.Controller.Faculty_RecordActivity"
+    tools:context="com.devanshisukhija.sicsrattendance.Controller.FacultyWrap.Faculty_RecordActivity"
     tools:showIn="@layout/app_bar_faculty__record">
 
     <TextView
         android:id="@+id/faculty_timer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/background_color_custom"
+        android:background="@drawable/side_nav_bar"
+        android:fontFamily="@font/open_sans"
         android:textAlignment="center"
+        android:textColor="@color/cardview_dark_background"
         android:textSize="150sp"
         android:visibility="visible"
         tools:text="00:00" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Button" />
 
 </LinearLayout>

@@ -8,6 +8,8 @@ import android.util.Log
 import android.view.View
 import android.widget.ProgressBar
 import android.widget.Toast
+import com.devanshisukhija.sicsrattendance.Controller.FacultyWrap.Faculty_HomeActivity
+import com.devanshisukhija.sicsrattendance.Controller.StudentWrap.Student_homeActivity
 import com.devanshisukhija.sicsrattendance.R
 import com.devanshisukhija.sicsrattendance.Services.FacultyDataService
 import com.devanshisukhija.sicsrattendance.Services.UserRoleService
