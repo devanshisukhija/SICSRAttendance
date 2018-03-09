@@ -8,14 +8,19 @@ import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
 import android.view.View
 import com.devanshisukhija.sicsrattendance.R
+import com.github.nkzawa.socketio.client.IO
+import com.github.nkzawa.socketio.client.Socket
 import kotlinx.android.synthetic.main.activity_student_home.*
 import kotlinx.android.synthetic.main.app_bar_faculty__home.*
 import kotlinx.android.synthetic.main.app_bar_student_home.*
+import java.net.URISyntaxException
 
 class Student_homeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     //BarChart
 //    val barChart : BarChart = student_BarChart as BarChart
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,10 +32,22 @@ class Student_homeActivity : AppCompatActivity(), NavigationView.OnNavigationIte
                 this, student_drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
         student_drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
-
         student_nav_view.setNavigationItemSelectedListener(this)
-       // barChart.setDrawBarShadow(false)
+         val socket = Socket()
 
+        socket.connect()
+
+    }
+
+
+    fun Socket() : Socket{
+         val socket : Socket
+            try {
+                socket = IO.socket("localhost:4555")
+            } catch (e: URISyntaxException) {
+                throw RuntimeException(e)
+            }
+        return socket
     }
 
     override fun onBackPressed() {
