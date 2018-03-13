@@ -1,0 +1,24 @@
+{
+  "name": "sicsrweb-portal",
+  "version": "1.0.0",
+  "description": "sever-side socket attendance application",
+  "main": "check.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/devanshisukhija/SICSRAttendance.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/devanshisukhija/SICSRAttendance/issues"
+  },
+  "homepage": "https://github.com/devanshisukhija/SICSRAttendance#readme",
+  "dependencies": {
+    "express": "^4.16.2",
+    "object-keys": "^1.0.11",
+    "socket.io": "^2.0.4"
+  }
+}
