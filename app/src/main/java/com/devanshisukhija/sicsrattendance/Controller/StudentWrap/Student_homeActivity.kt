@@ -12,7 +12,6 @@ import com.github.nkzawa.socketio.client.IO
 import com.github.nkzawa.socketio.client.Socket
 import kotlinx.android.synthetic.main.activity_student_home.*
 import kotlinx.android.synthetic.main.app_bar_faculty__home.*
-import kotlinx.android.synthetic.main.app_bar_student_home.*
 import java.net.URISyntaxException
 
 class Student_homeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -25,12 +24,10 @@ class Student_homeActivity : AppCompatActivity(), NavigationView.OnNavigationIte
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_student_home)
-        setSupportActionBar(student_toolbar)
-
-
+        setSupportActionBar(toolbar)
         val toggle = ActionBarDrawerToggle(
                 this, student_drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
-        student_drawer_layout.addDrawerListener(toggle)
+       student_drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
         student_nav_view.setNavigationItemSelectedListener(this)
          val socket = Socket()
@@ -43,37 +40,29 @@ class Student_homeActivity : AppCompatActivity(), NavigationView.OnNavigationIte
     fun Socket() : Socket{
          val socket : Socket
             try {
-                socket = IO.socket("localhost:4555")
+                socket = IO.socket("192.168.1.103:4555")
             } catch (e: URISyntaxException) {
                 throw RuntimeException(e)
             }
         return socket
     }
 
-    override fun onBackPressed() {
-        if (student_drawer_layout.isDrawerOpen(GravityCompat.START)) {
-            student_drawer_layout.closeDrawer(GravityCompat.START)
-        } else {
-            super.onBackPressed()
-        }
-    }
-
-    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
-//        when (item.itemId) {
-//            R.id.student_sidenav_home -> {
-//                // Handle the camera action
-//            }
-//            R.id.student_sidenav_lecture -> {
-//
-//            }
-//            R.id.student_sidenav_schedule -> {
-//
-//            }
-//            R.id.student_sidenav_report -> {
-//
-//            }
-//        }
+        when (item.itemId) {
+            R.id.student_sidenav_home -> {
+
+            }
+            R.id.student_sidenav_lecture -> {
+
+            }
+            R.id.student_sidenav_schedule -> {
+
+            }
+            R.id.student_sidenav_report -> {
+
+            }
+        }
 
         student_drawer_layout.closeDrawer(GravityCompat.START)
         return true

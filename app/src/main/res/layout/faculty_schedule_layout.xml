@@ -12,7 +12,7 @@
             android:fontFamily="@font/open_sans"
             android:padding="5dp"
             android:layout_width="0dp"
-            android:layout_weight="1"
+            android:layout_weight="2"
             android:textColor="#000000"
             android:textSize="24sp"
             tools:text="10:00 - 11:00"

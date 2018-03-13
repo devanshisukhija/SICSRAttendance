@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/button_layout">
+
+
+    <TextView
+        android:padding="5dp"
+        android:id="@+id/textView2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Lecture Conflict"
+        android:textAlignment="center"
+        android:textColor="@color/sicsrYellow"
+        android:textSize="24dp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:padding="5dp"
+        android:id="@+id/textView3"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:text="It seems there are multiple lectures assigned at the same time slot. Please confirm the course."
+        android:textAlignment="center"
+        android:textSize="16sp" />
+
+    <TextView
+        android:padding="5dp"
+        android:id="@+id/lecture_conflict_courseTxt"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:textAlignment="center"
+        android:textSize="16sp" />
+
+</LinearLayout>

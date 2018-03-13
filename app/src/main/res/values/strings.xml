@@ -37,4 +37,5 @@
     <string name="lectures">Lectures</string>
     <string name="attendance_report">Attendance Report</string>
     <string name="title_activity_faculty__record">Faculty_RecordActivity</string>
+    <string name="title_activity_faculty__schedule">Faculty_ScheduleActivity</string>
 </resources>

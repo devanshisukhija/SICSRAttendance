@@ -9,6 +9,9 @@ import com.google.firebase.database.ValueEventListener
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
+/**
+ * This Serivce singleton is for fetching the daily lecture information and storing it in a lecture array.
+ */
 
 object UpdateScheduledLecturesService {
     //[Firebase Database Reference]
@@ -46,9 +49,11 @@ object UpdateScheduledLecturesService {
                                val timestamp = it.child("timestamp").value.toString()
                                val program = it.child("program_name").value.toString()
                                val lecture_id = it.child("lectureId").value.toString()
+                               val modified_start_time = it.child("modified_start_time").value.toString()
+                               val modified_end_time = it.child("modified_end_time").value.toString()
 
                                //[New ScheduledLectures obj.]
-                               val new_lecture = ScheduledLectures(start_time , end_time, course_code, course, room_name, timestamp, program, batch,semester, faculty, division, lecture_id)
+                               val new_lecture = ScheduledLectures(modified_start_time,modified_end_time,start_time , end_time, course_code, course, room_name, timestamp, program, batch,semester, faculty, division, lecture_id)
                                if(new_lecture != null) {
                                    lectures.add(new_lecture)
                                }

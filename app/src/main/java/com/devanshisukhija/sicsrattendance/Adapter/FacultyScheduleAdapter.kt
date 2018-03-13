@@ -46,7 +46,7 @@ class FacultyScheduleAdapter(val context : Context, val scheduled_lecture : Arra
 
             program?.text = lecture.program
             course?.text = lecture.course_name
-            lecture_time?.text = lecture.start_time + "- \n" +lecture.end_time
+            lecture_time?.text = lecture.modified_start_time + "- \n" +lecture.modified_end_time
             venue?.text = lecture.class_room
             semester?.text = lecture.semester
 

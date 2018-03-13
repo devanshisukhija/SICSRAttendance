@@ -3,58 +3,49 @@ package com.devanshisukhija.sicsrattendance.Utility
 import android.util.Log
 import com.devanshisukhija.sicsrattendance.Services.UpdateScheduledLecturesService
 import java.text.ParseException
-import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.util.*
 
 /**
- * Created by devanshi on 08/03/18.
+ * This file is checking if there is any lecture assigned at the time of record button clicked, if there is not any lecture it
+ * flags for dialog pop up. Also it has a function for returning time difference for the timer to work.
  */
  class FacultyRecordHelper {
 
+
+
     val TAG = "FacultyRecordHelper"
     var count : Int = 0
-    var time_difference : Int = 0
+    var secondsRemaining: Long = 0
+    var lectureID : String? = null
+    var lectureName : String? = null
 
  fun check_for_lecture(complete:(Boolean) -> Unit) : Int{
-    if(UpdateScheduledLecturesService.lectures != null) {
-        for(x in UpdateScheduledLecturesService.lectures) {
-            try {
-                val start_time = x.start_time
-                val starttime_date = SimpleDateFormat("hh:mm").parse(start_time)
-                val starttime_calendar = Calendar.getInstance()
-                starttime_calendar.setTime(starttime_date)
 
-                val end_time = x.end_time
-                val endtime_date = SimpleDateFormat("hh:mm").parse(end_time)
-                val endtime_calendar = Calendar.getInstance()
-                endtime_calendar.setTime(endtime_date)
-                endtime_calendar.add(Calendar.DATE, 1)
+         for (x in UpdateScheduledLecturesService.lectures) {
+             try {
+                 val start_time = x.start_time.toLong()
+                 val end_time = x.end_time.toLong()
+                 val timeRightnow = (System.currentTimeMillis() / 1000)
+            // CompareTo returns a negative number if it's less than other, or a positive number if it's greater than other.
+             if (timeRightnow == start_time || timeRightnow > start_time  && timeRightnow < end_time) {
+                 count++
+                 lectureID = x.lectureID
+                 lectureName = x.course_name
+                 Log.d(TAG, "Test: lectureId assigned")
+                 complete(true)
+                 } else {
+                     Log.d(TAG, "no lectures at this time")
+                     complete(false)
+                 }
+             } catch (e: ParseException) {
+                 Log.d(TAG, "Exception")
+                 e.printStackTrace()
+                 complete(false)
+             }
+         }
 
-                val time_rightnow = currentTime()
-                val currenttime_date = SimpleDateFormat("hh:mm").parse(time_rightnow)
-                val currenttime_calendar = Calendar.getInstance()
-                currenttime_calendar.setTime(currenttime_date)
-                currenttime_calendar.add(Calendar.DATE, 1)
 
-                val get_time_rightnow = currenttime_calendar.time
-                if (get_time_rightnow.after(starttime_calendar.time) && get_time_rightnow.before(endtime_calendar.time)) {
-                    count++
-                    complete(true)
-                }
-                else {
-                    complete(false)
-                }
-            } catch (e: ParseException) {
-                Log.d(TAG , "Exception")
-                e.printStackTrace()
-                complete(false)
-            }
-        }
-    } else {
-        Log.d(TAG, "lecture is null")
-    }
      return count
  }
     fun currentTime() : String{
@@ -64,18 +55,26 @@ import java.util.*
         return formatted
     }
 
-    fun get_difference(endtime_date : Date , currenttime_date : Date) : String {
-        var diff: String
-        try {
-            val mills = endtime_date.time.minus(currenttime_date.time )
-                        val hours = mills / (1000 * 60 * 60)
-                        val mins = (mills / (1000 * 60) % 60).toInt()
-                        diff = "" +hours+ ":"+mins // updated value every1 second
-            println("LOLOLL :::: "+currenttime_date.time +"---"+ endtime_date.time +"---" + mills)
-
-        } catch (e: Exception) {
-            e.printStackTrace()
+    fun getDifference() : Long{
+        for(x in UpdateScheduledLecturesService.lectures) {
+            println(lectureID)
+            if(!lectureID.isNullOrBlank() && x.lectureID == lectureID) {
+                try {
+                    val startTime = x.start_time.toLong()
+                    val endTime = x.end_time.toLong()
+                    val timeRightnow = System.currentTimeMillis() / 1000
+                    val mills = endTime - timeRightnow
+                    println(TAG + mills)
+                    return mills
+                    break;
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            } else {
+                Log.d(TAG,"Lecture ID is either null or that id doesnt exist.")
+            }
         }
-        return "ty"
-    }
+
+        return 0
+}
 }

@@ -14,6 +14,8 @@ import com.devanshisukhija.sicsrattendance.R
 import com.devanshisukhija.sicsrattendance.Services.FacultyDataService
 import com.devanshisukhija.sicsrattendance.Services.UserRoleService
 import com.devanshisukhija.sicsrattendance.Utility.DatabaseHelper
+import com.devanshisukhija.sicsrattendance.Utility.LOGIN_TO_FACULTY_INTENT_USER_EMAIL
+import com.devanshisukhija.sicsrattendance.Utility.LOGIN_TO_FACULTY_INTENT_USER_NAME
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -94,6 +96,9 @@ class LoginActivity : AppCompatActivity() {
                                     when(UserRoleService.role) {
                                         "faculty" -> {
                                             val role_intent = Intent(this@LoginActivity, Faculty_HomeActivity::class.java)
+                                            role_intent.putExtra(LOGIN_TO_FACULTY_INTENT_USER_EMAIL, FacultyDataService.email)
+                                            role_intent.putExtra(LOGIN_TO_FACULTY_INTENT_USER_NAME, FacultyDataService.name)
+
                                             finish()
                                             startActivity(role_intent)
                                         }
@@ -136,54 +141,7 @@ class LoginActivity : AppCompatActivity() {
                 .setNegativeButton("Close") { _, _ -> }.show()
     }//[End : func# 4.]
 
-//    //[Start : of function to check the role of currently logged in user.] --> func# 5.
-//    fun checkUsertype() {
-//        val currentUserAuthToken = mUser?.uid
-//        val ref = mDatabaseReference.child("Users").child("authTokenCheck")
-//
-//        // initializing "mValueEventListener"
-//        mValueEventListener = object : ValueEventListener {
-//            override fun onCancelled(mDatabaseError: DatabaseError?) {
-//                val err = mDatabaseError.toString()
-//                enableSpinner(false)
-//                Log.d("VEL:Error : ", err)
-//            }
-//            override fun onDataChange(mDataSnapshot: DataSnapshot?) {
-//                mDataSnapshot?.children?.forEach {
-//                    val role : String? = it.child("role").value.toString()
-//                    if (it.key.toString() == currentUserAuthToken) {
-//                        Log.d("TEST : ", "Current Uid matched Uid in database")
-//                        if(mUser != null && role != null) {  //[Start : of Null Check]
-//                            enableSpinner(false)
-//                            intent_to_roleActivity(role)
-//                        }//[End : of ^ Null Check.]
-//                    } else {
-//                        enableSpinner(false)
-//                        //TODO : add code
-//                    }//[End : ^ else]
-//                }//[End : of foreach DataSnapShot]
-//            }//[End : of onDataChange]
-//        } //[End : mValueEventListener]
-//        ref.addValueEventListener(mValueEventListener)
-//    } //[End : func# 5]
-
-    //[Start : of Function to redirect users to their respective activities.] --> func# 6
-    fun intent_to_roleActivity( role : String){
-        Log.d("TEST : ", "Role passed to func# 6 intent_to_roleActivity" + role)
-        if (role == "student") {
-            val role_intent = Intent(this, Student_homeActivity::class.java)
-            finish()
-            startActivity(role_intent)
-        } else if (role == "faculty") {
-            val role_intent = Intent(this, Faculty_HomeActivity::class.java)
-            finish()
-            startActivity(role_intent)
-        } else {
-            Toast.makeText(this, "Authorisation Error.", Toast.LENGTH_LONG).show()
-        }
-    }//[End : func# 6]
-
-    //[Start : of Enable Spinner Function] --> func# 7
+    //[Start : of Enable Spinner Function] --> func# 6
     fun enableSpinner (enable  : Boolean) {
         val loginSpinner = findViewById<ProgressBar>(R.id.loginSpinner)
         if(enable) {
@@ -193,7 +151,7 @@ class LoginActivity : AppCompatActivity() {
         }
         //[Enabling Spinner on Login Btn.]
         loginLoginBtn.isEnabled = true
-    }//[End : func# 7]
+    }//[End : func# 6]
 }
 
 

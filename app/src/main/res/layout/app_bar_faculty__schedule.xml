@@ -4,36 +4,35 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.devanshisukhija.sicsrattendance.Controller.FacultyWrap.Faculty_HomeActivity">
+    tools:context="com.devanshisukhija.sicsrattendance.Controller.FacultyWrap.Faculty_ScheduleActivity">
 
     <android.support.design.widget.AppBarLayout
+        android:id="@+id/faculty_appbarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/AppTheme.AppBarOverlay"
         android:background="@color/sicsrYellow">
 
         <android.support.v7.widget.Toolbar
-            android:id="@+id/student_toolbar"
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
+            app:title=" "
             android:textAlignment="textStart"
-            app:popupTheme="@style/AppTheme.PopupOverlay"
-            app:title=" ">
+            app:popupTheme="@style/AppTheme.PopupOverlay">
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:contentDescription="@string/nav_header_img"
                 android:scaleType="centerCrop"
-                android:src="@drawable/ic_sicsr_img" />
+                android:src="@drawable/ic_sicsr_img"
+                android:contentDescription="@string/nav_header_img" />
 
         </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>
 
     <include
-        layout="@layout/content_student_home" />
-
+        layout="@layout/content_faculty__schedule" />
 
 
 </android.support.design.widget.CoordinatorLayout>
-
