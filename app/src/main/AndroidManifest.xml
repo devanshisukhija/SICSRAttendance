@@ -53,17 +53,32 @@
             android:name=".Controller.FacultyWrap.Faculty_RecordActivity"
             android:label="@string/title_activity_faculty__record"
             android:theme="@style/AppTheme">
-
-            <!-- <intent-filter> -->
-            <!-- <action android:name="android.intent.action.MAIN" /> -->
-
-
-            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
-            <!-- </intent-filter> -->
         </activity>
         <activity
             android:name=".Controller.FacultyWrap.Faculty_ScheduleActivity"
             android:label="@string/title_activity_faculty__schedule"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".Controller.FacultyWrap.Faculty_LectureActivity"
+            android:label="@string/title_activity_faculty__lecture"
+            android:theme="@style/AppTheme" >
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+        </activity>
+        <activity
+            android:name=".Controller.StudentWrap.Student_LectureActivity"
+            android:label="@string/title_activity_student__lecture"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".Controller.StudentWrap.Student_ScheduleActivity"
+            android:label="@string/title_activity_student__schedule"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".Controller.StudentWrap.Student_ReportActivity"
+            android:label="@string/title_activity_student__report"
             android:theme="@style/AppTheme"></activity>
     </application>
 

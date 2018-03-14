@@ -30,7 +30,6 @@ object FacultyDataService {
                         email = dataSnapshot.child("email").value.toString()
                         role = dataSnapshot.child("role").value.toString()
                         uid = mUserUId
-                        println("DEVANSHI" + name)
                         complete(true)
                     } else {
                         Log.d(TAG , "dataSnapShot is empty.")

@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.wifi.WifiManager
 import android.os.Bundle
+import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
@@ -22,14 +23,13 @@ import com.devanshisukhija.sicsrattendance.Utility.LOGIN_TO_FACULTY_INTENT_USER_
 import kotlinx.android.synthetic.main.activity_faculty__home.*
 import kotlinx.android.synthetic.main.app_bar_faculty__home.*
 import kotlinx.android.synthetic.main.content_faculty__home.*
-import kotlinx.android.synthetic.main.nav_header_faculty__home.*
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 
 
 
-class Faculty_HomeActivity : AppCompatActivity() {
+class Faculty_HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
     val TAG = "Faculty_homeActivity"
         //[Start : onCreat] --> func #1
         override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,7 +48,7 @@ class Faculty_HomeActivity : AppCompatActivity() {
             setupUI()
     }//[End : func# 1]
 
-     fun onNavigationItemSelected(item: MenuItem): Boolean {
+     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
         when (item.itemId) {
             R.id.faculty_sidenav_home -> {
@@ -58,11 +58,9 @@ class Faculty_HomeActivity : AppCompatActivity() {
                 startActivity(Intent(this, Faculty_ScheduleActivity :: class.java))
             }
             R.id.faculty_sidenav_lecture -> {
-
+                startActivity(Intent(this@Faculty_HomeActivity, Faculty_LectureActivity:: class.java))
             }
-
       }
-
         faculty_drawer_layout.closeDrawer(GravityCompat.START)
         return true
     }
@@ -114,7 +112,7 @@ class Faculty_HomeActivity : AppCompatActivity() {
         val previousIntentValueName = intent.getCharSequenceExtra(LOGIN_TO_FACULTY_INTENT_USER_NAME)
         val previousIntentValueEmail = intent.getCharSequenceExtra(LOGIN_TO_FACULTY_INTENT_USER_EMAIL)
         println(TAG + "name : " + previousIntentValueName + ",  Email : "+ previousIntentValueEmail )
-        faculty_nav_header_name.text = previousIntentValueName
+        //faculty_nav_header_name.text = previousIntentValueName
     }
 
     fun getDay_of_week() : String {

@@ -38,4 +38,8 @@
     <string name="attendance_report">Attendance Report</string>
     <string name="title_activity_faculty__record">Faculty_RecordActivity</string>
     <string name="title_activity_faculty__schedule">Faculty_ScheduleActivity</string>
+    <string name="title_activity_faculty__lecture">Faculty_LectureActivity</string>
+    <string name="title_activity_student__lecture">Student_LectureActivity</string>
+    <string name="title_activity_student__schedule">Student_ScheduleActivity</string>
+    <string name="title_activity_student__report">Student_ReportActivity</string>
 </resources>

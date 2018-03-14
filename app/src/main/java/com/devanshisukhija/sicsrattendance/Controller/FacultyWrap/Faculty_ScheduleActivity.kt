@@ -18,11 +18,11 @@ class Faculty_ScheduleActivity : AppCompatActivity(), NavigationView.OnNavigatio
         setContentView(R.layout.activity_faculty__schedule)
         setSupportActionBar(toolbar)
         val toggle = ActionBarDrawerToggle(
-                this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
-        drawer_layout.addDrawerListener(toggle)
+                this, faculty_schedule_drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
+        faculty_schedule_drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
 
-        nav_view.setNavigationItemSelectedListener(this)
+        faculty_schedule_nav_view.setNavigationItemSelectedListener(this)
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -39,7 +39,7 @@ class Faculty_ScheduleActivity : AppCompatActivity(), NavigationView.OnNavigatio
             }
         }
 
-        drawer_layout.closeDrawer(GravityCompat.START)
+        faculty_schedule_drawer_layout.closeDrawer(GravityCompat.START)
         return true
     }
 }

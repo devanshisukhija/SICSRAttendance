@@ -5,9 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.devanshisukhija.sicsrattendance.Controller.FacultyWrap.Faculty_ScheduleActivity"
-    tools:showIn="@layout/app_bar_faculty__schedule">
-
-
+    tools:context="com.devanshisukhija.sicsrattendance.Controller.StudentWrap.Student_ReportActivity"
+    tools:showIn="@layout/app_bar_student__report">
 
 </android.support.constraint.ConstraintLayout>
