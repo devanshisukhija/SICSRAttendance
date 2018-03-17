@@ -10,16 +10,19 @@ import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.text.format.Formatter
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
+import android.widget.TextView
+import com.devanshisukhija.sicsrattendance.Controller.LoginActivity
 import com.devanshisukhija.sicsrattendance.R
+import com.devanshisukhija.sicsrattendance.R.id.faculty_nav_header_name
 import com.devanshisukhija.sicsrattendance.Services.FacultyDataService
 import com.devanshisukhija.sicsrattendance.Services.UpdateScheduledLecturesService
 import com.devanshisukhija.sicsrattendance.Utility.FACULTY_HOME_TO_RECORD_INTENT_START_RECORD
-import com.devanshisukhija.sicsrattendance.Utility.LOGIN_TO_FACULTY_INTENT_USER_EMAIL
-import com.devanshisukhija.sicsrattendance.Utility.LOGIN_TO_FACULTY_INTENT_USER_NAME
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_faculty__home.*
 import kotlinx.android.synthetic.main.app_bar_faculty__home.*
 import kotlinx.android.synthetic.main.content_faculty__home.*
@@ -44,28 +47,38 @@ class Faculty_HomeActivity : AppCompatActivity(), NavigationView.OnNavigationIte
             //[Function call to set the Schedule Adapters]
             setupAdapters()
             //[Function call to setup UI]
-            val facultyDataService  = FacultyDataService
             setupUI()
+            faculty_nav_view.setNavigationItemSelectedListener(this)
     }//[End : func# 1]
+
+    override fun onStart() {
+        super.onStart()
+        setupAdapters()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        setupAdapters()
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+        setupAdapters()
+    }
 
      override fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
         when (item.itemId) {
             R.id.faculty_sidenav_home -> {
-                startActivity(Intent(this, this :: class.java))
-            }
-            R.id.faculty_sidenav_schedule -> {
-                startActivity(Intent(this, Faculty_ScheduleActivity :: class.java))
+                faculty_drawer_layout.closeDrawers()
             }
             R.id.faculty_sidenav_lecture -> {
-                startActivity(Intent(this@Faculty_HomeActivity, Faculty_LectureActivity:: class.java))
+                startActivity(Intent(this, Faculty_LectureActivity:: class.java))
             }
       }
         faculty_drawer_layout.closeDrawer(GravityCompat.START)
         return true
     }
-
-
         //[Start : Set Adapter]  --> func# 3
     private fun setupAdapters() {
         UpdateScheduledLecturesService.getLectures { complete ->
@@ -73,7 +86,7 @@ class Faculty_HomeActivity : AppCompatActivity(), NavigationView.OnNavigationIte
                 true -> { Log.d("TEXT : ", "Updated Lectues")
                     val adapter = FacultyScheduleAdapter(this, UpdateScheduledLecturesService.lectures)
                     faculty_recyclerview.adapter = adapter
-                    val layoutManager = LinearLayoutManager(this@Faculty_HomeActivity)
+                    val layoutManager: RecyclerView.LayoutManager = LinearLayoutManager(this@Faculty_HomeActivity)
                     faculty_recyclerview.layoutManager = layoutManager
                     faculty_recyclerview.setHasFixedSize(true)
                 }
@@ -85,6 +98,8 @@ class Faculty_HomeActivity : AppCompatActivity(), NavigationView.OnNavigationIte
     }//[End : Set Adapter]
 
     fun nav_header_logout_clicked(view : View) {
+        FirebaseAuth.getInstance().signOut();
+        startActivity(Intent(this, LoginActivity :: class.java))
 
     }
 
@@ -107,12 +122,13 @@ class Faculty_HomeActivity : AppCompatActivity(), NavigationView.OnNavigationIte
     }
 
     fun setupUI(){
+        val layout = View.inflate(this, R.layout.nav_header_faculty__home, null)
         faculty_home_dateStamp.text = getDate_of_month()
         faculty_home_dayStamp.text = getDay_of_week()
-        val previousIntentValueName = intent.getCharSequenceExtra(LOGIN_TO_FACULTY_INTENT_USER_NAME)
-        val previousIntentValueEmail = intent.getCharSequenceExtra(LOGIN_TO_FACULTY_INTENT_USER_EMAIL)
-        println(TAG + "name : " + previousIntentValueName + ",  Email : "+ previousIntentValueEmail )
-        //faculty_nav_header_name.text = previousIntentValueName
+        Log.d("setupUI", FacultyDataService.name + "  , email : " + FacultyDataService.email)
+        println(TAG + "nsme : "+ FacultyDataService.name + "  , email : " + FacultyDataService.email)
+        (layout.findViewById<TextView>(faculty_nav_header_name)).text = FacultyDataService.name
+        (layout.findViewById<TextView>(R.id.faculty_nav_header_email)).text = FacultyDataService.email
     }
 
     fun getDay_of_week() : String {

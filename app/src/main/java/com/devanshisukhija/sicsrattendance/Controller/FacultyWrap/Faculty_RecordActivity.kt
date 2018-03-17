@@ -1,8 +1,10 @@
 package com.devanshisukhija.sicsrattendance.Controller.FacultyWrap
 
+import android.content.Intent
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.support.design.widget.NavigationView
+import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
@@ -32,7 +34,7 @@ class Faculty_RecordActivity : AppCompatActivity(), NavigationView.OnNavigationI
     enum class TimerState{
         Stopped, Running
     }
-    private val facultyRecordHelper = FacultyRecordHelper()
+    val facultyRecordHelper = FacultyRecordHelper()
     private lateinit var timer: CountDownTimer
     private var timerLengthSeconds: Long = 0
     private var timerState = TimerState.Stopped
@@ -44,8 +46,8 @@ class Faculty_RecordActivity : AppCompatActivity(), NavigationView.OnNavigationI
         setSupportActionBar(toolbar)
 
         val toggle = ActionBarDrawerToggle(
-                this, faculty_schedule_drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
-        faculty_schedule_drawer_layout.addDrawerListener(toggle)
+                this, faculty_record_drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
+        faculty_record_drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
 
         faculty_record_nav_view.setNavigationItemSelectedListener(this)
@@ -60,20 +62,49 @@ class Faculty_RecordActivity : AppCompatActivity(), NavigationView.OnNavigationI
                     when(it){
                         true -> {
                             if(facultyRecordHelper.count > 1){
-                                val builder = AlertDialog.Builder(this)
-                                val dialogView = layoutInflater.inflate(R.layout.lecture_conflict_dialog, null)
-                                builder.setView(dialogView)
-//                                        .setPositiveButton(lecture_conflict_courseTxt)
+                                val alertDilog = AlertDialog.Builder(this@Faculty_RecordActivity).create()
+                                alertDilog.setTitle("More that 1 lecture assigned at this time.")
+                                alertDilog.setMessage("It seems there are multple lectures at the moment. ")
+                                alertDilog.setButton(AlertDialog.BUTTON_POSITIVE, "OK", {
+                                    dialogInterface, i ->
+                                    startActivity(Intent(this, Faculty_HomeActivity :: class.java))
+                                })
+                                alertDilog.show()
                                 Log.d(TAG, "complete check_for_lecture")
                             }
                             else if(facultyRecordHelper.count == 1){
+                                var course = facultyRecordHelper.lectureName
+                                var classroom = facultyRecordHelper.lectureVenue
                                 Log.d(TAG, "count is one" )
+                                val alertDilog = AlertDialog.Builder(this@Faculty_RecordActivity).create()
+                                alertDilog.setTitle("Confirm Course and Classroom.")
+                                alertDilog.setMessage("Coures  : " + course)
+                                alertDilog.setMessage("Classroom : " + classroom)
+                                alertDilog.setButton(AlertDialog.BUTTON_POSITIVE, "CONFIRM", {
+                                    dialogInterface, i ->
+                                    dialogInterface.dismiss()
+                                })
+                                alertDilog.setButton(AlertDialog.BUTTON_NEGATIVE, "CANCEL", {
+                                    dialog, which ->
+                                    startActivity(Intent(this, Faculty_HomeActivity :: class.java))
+                                    Toast.makeText(applicationContext, "Try again" , Toast.LENGTH_LONG).show()
+                                })
+                                alertDilog.show()
                                 timerLengthSeconds = facultyRecordHelper.getDifference()
                                 secondsRemaining = facultyRecordHelper.getDifference()
                                 facutly_record_display_lectureInfo.text = facultyRecordHelper.lectureName
                                 startTimer()
                                 timerState = TimerState.Running
                             } else {
+                                val alertDilog = AlertDialog.Builder(this@Faculty_RecordActivity).create()
+                                alertDilog.setTitle("NO LECTURE.")
+                                alertDilog.setMessage("It seems there are no lectures at the moment. For more details check your schedule.")
+
+                                alertDilog.setButton(AlertDialog.BUTTON_POSITIVE, "OK", {
+                                    dialogInterface, i ->
+                                    startActivity(Intent(this, Faculty_HomeActivity :: class.java))
+                                })
+                                alertDilog.show()
                                 Log.d(TAG, "The count is not more or equal to 1" + facultyRecordHelper.count + "  " + facultyRecordHelper.lectureID)
                             }
                         }
@@ -166,9 +197,7 @@ class Faculty_RecordActivity : AppCompatActivity(), NavigationView.OnNavigationI
 
     override fun onResume() {
         super.onResume()
-
         initTimer()
-
         //TODO: remove background timer, hide notification
     }
 
@@ -176,25 +205,14 @@ class Faculty_RecordActivity : AppCompatActivity(), NavigationView.OnNavigationI
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
         when (item.itemId) {
-//            R.id.nav_camera -> {
-//                // Handle the camera action
-//            }
-//            R.id.nav_gallery -> {
-//
-//            }
-//            R.id.nav_slideshow -> {
-//
-//            }
-//            R.id.nav_manage -> {
-//
-//            }
-//            R.id.nav_share -> {
-//
-//            }
-//            R.id.nav_send -> {
-
+            R.id.faculty_sidenav_home -> {
+                startActivity(Intent(this, Faculty_HomeActivity :: class.java))
             }
-//        faculty_drawer_layout.closeDrawer(GravityCompat.START)
+            R.id.faculty_sidenav_lecture -> {
+                startActivity(Intent(this, Faculty_LectureActivity:: class.java))
+            }
+            }
+        faculty_record_drawer_layout.closeDrawer(GravityCompat.START)
        return true
         }
 
@@ -209,12 +227,11 @@ class Faculty_RecordActivity : AppCompatActivity(), NavigationView.OnNavigationI
         if(!inputString.isNotEmpty()){
 
         } else {
-            var newLearningObj = LearningObjectives(FacultyRecordHelper().lectureID , inputString)
-            mDatabase?.reference?.child("Users/"+FacultyDataService.uid+"/LectureLearningObj/Lecture-ID"+facultyRecordHelper.lectureID)?.setValue(newLearningObj)
-            Log.d(TAG,mDatabase?.reference?.child("Users/"+FacultyDataService.uid+"/LectureLearningObj/Lecture-ID"+facultyRecordHelper.lectureID)?.toString())
-            Toast.makeText(this, "Learning Objectived is saved.", Toast.LENGTH_LONG).show()
-            faculty_record_LrnObj.text.clear()
+        var newLearningObj = LearningObjectives("learningObj" , inputString)
+        mDatabase?.reference?.child("Users/"+FacultyDataService.uid+"/LecturesCoursesWise/"+facultyRecordHelper.lectureCode+"/"+facultyRecordHelper.lecturePushID)?.setValue(newLearningObj)
+        Toast.makeText(this, "Learning Objectived is saved.", Toast.LENGTH_LONG).show()
+        faculty_record_LrnObj.text.clear()
         }
     }
-    }
+}
 

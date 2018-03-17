@@ -5,43 +5,31 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.devanshisukhija.sicsrattendance.Controller.FacultyWrap.Faculty_LectureActivity"
-    tools:showIn="@layout/app_bar_faculty__lecture">
+    tools:context="com.devanshisukhija.sicsrattendance.Controller.StudentWrap.Student_LectureActivity2"
+    tools:showIn="@layout/app_bar_student__lecture2">
 
     <TextView
-        android:id="@+id/schedule_history"
+        android:id="@+id/schedule_student_history"
         android:layout_width="match_parent"
         android:layout_height="70dp"
         android:background="@drawable/background_color_custom"
         android:fontFamily="@font/open_sans_bold"
         android:padding="5dp"
-        android:text="Lecture History"
+        android:text="@string/lecture_history"
         android:textAlignment="center"
         android:textColor="@color/sicsrYellow"
         android:textSize="32sp" />
 
-    <TextView
-        android:id="@+id/choose_course"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_marginLeft="24dp"
-        android:layout_marginRight="24dp"
-        android:fontFamily="@font/open_sans_bold"
-        android:padding="5dp"
-        android:textAlignment="center"
-        android:textSize="25sp"
-        android:text="Choose Course"
-        app:layout_constraintTop_toBottomOf="@id/schedule_history"
-        />
-
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/faculty_lecture_recyclerView"
+        android:id="@+id/student_lecture_recyclerView2"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/choose_course"/>
+        app:layout_constraintTop_toBottomOf="@+id/schedule_student_history">
+
+    </android.support.v7.widget.RecyclerView>
 
 </android.support.constraint.ConstraintLayout>

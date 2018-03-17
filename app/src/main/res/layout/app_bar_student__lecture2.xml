@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.devanshisukhija.sicsrattendance.Controller.StudentWrap.Student_ScheduleActivity">
+    tools:context="com.devanshisukhija.sicsrattendance.Controller.StudentWrap.Student_LectureActivity2">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/student_appbarLayout"
@@ -14,7 +14,7 @@
         android:background="@color/sicsrYellow">
 
         <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
+            android:id="@+id/student_lecture2_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:title=" "
@@ -29,9 +29,8 @@
                 android:contentDescription="@string/nav_header_img" />
 
         </android.support.v7.widget.Toolbar>
-
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_student__schedule" />
+    <include layout="@layout/content_student__lecture2" />
 
 </android.support.design.widget.CoordinatorLayout>

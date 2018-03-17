@@ -42,4 +42,12 @@
     <string name="title_activity_student__lecture">Student_LectureActivity</string>
     <string name="title_activity_student__schedule">Student_ScheduleActivity</string>
     <string name="title_activity_student__report">Student_ReportActivity</string>
+    <string name="title_activity_faculty__lecture2">Faculty_LectureActivity2</string>
+    <string name="choose_course">Choose Course</string>
+    <string name="lecture_history">Lecture History</string>
+    <string name="title_activity_student__lecture2">Student_LectureActivity2</string>
+    <string name="end_lecture">End Lecture</string>
+    <string name="today_s_lecture_s_learning_objective">Today\'s Lecture\'s Learning Objective:</string>
+    <string name="enter_learning_objective">Enter Learning Objective.</string>
+    <string name="save">Save</string>
 </resources>

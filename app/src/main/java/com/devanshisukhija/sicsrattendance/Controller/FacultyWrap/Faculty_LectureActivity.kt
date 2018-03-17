@@ -12,6 +12,7 @@ import android.view.MenuItem
 import com.devanshisukhija.sicsrattendance.Adapter.FacultyCourseAdapter
 import com.devanshisukhija.sicsrattendance.R
 import com.devanshisukhija.sicsrattendance.Services.FacultyCourseDataService
+import com.devanshisukhija.sicsrattendance.Utility.COURSE_TO_LECTURE_INTENT_EXTRA_COURSE_CODE
 import kotlinx.android.synthetic.main.activity_faculty__lecture.*
 import kotlinx.android.synthetic.main.app_bar_faculty__lecture.*
 import kotlinx.android.synthetic.main.content_faculty__lecture.*
@@ -32,6 +33,15 @@ class Faculty_LectureActivity : AppCompatActivity(), NavigationView.OnNavigation
 
         setupAdapters()
     }
+    override fun onRestart() {
+        super.onRestart()
+        setupAdapters()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        setupAdapters()
+    }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
@@ -39,15 +49,10 @@ class Faculty_LectureActivity : AppCompatActivity(), NavigationView.OnNavigation
             R.id.faculty_sidenav_home -> {
                 startActivity(Intent(this, Faculty_HomeActivity :: class.java))
             }
-            R.id.faculty_sidenav_schedule -> {
-                startActivity(Intent(this, Faculty_ScheduleActivity :: class.java))
-            }
             R.id.faculty_sidenav_lecture -> {
-                startActivity(Intent(this, Faculty_LectureActivity:: class.java))
+                faculty_lecture_drawer_layout.closeDrawers()
             }
-
         }
-
         faculty_lecture_drawer_layout.closeDrawer(GravityCompat.START)
         return true
     }
@@ -55,13 +60,21 @@ class Faculty_LectureActivity : AppCompatActivity(), NavigationView.OnNavigation
     private fun setupAdapters() {
         println(FacultyCourseDataService.courses)
 
-        FacultyCourseDataService.fetchcourseData { complete ->
+        FacultyCourseDataService.fetchCourseData { complete ->
             when(complete) {
-                true -> {val adapter = FacultyCourseAdapter(this, FacultyCourseDataService.courses)
+                true -> {
+                    println(TAG + ": " + FacultyCourseDataService.courses)
+                    val adapter = FacultyCourseAdapter(this, FacultyCourseDataService.courses){course ->
+
+                        val courseintent = Intent(this, Faculty_LectureActivity2 :: class.java)
+                        courseintent.putExtra(COURSE_TO_LECTURE_INTENT_EXTRA_COURSE_CODE , course.course_code)
+                        println(TAG+ "...."+ course.course_code)
+                        startActivity(courseintent)
+                    }
                     faculty_lecture_recyclerView.adapter = adapter
                     val layoutManager = LinearLayoutManager(this@Faculty_LectureActivity)
                     faculty_lecture_recyclerView.layoutManager = layoutManager
-                    faculty_lecture_recyclerView . setHasFixedSize (true)
+                    faculty_lecture_recyclerView.setHasFixedSize(true)
                 }
                 false -> {
                     Log.d(TAG, "fetch was not complete")
@@ -69,5 +82,4 @@ class Faculty_LectureActivity : AppCompatActivity(), NavigationView.OnNavigation
             }
         }
     }//[End : Set Adapter]
-
 }

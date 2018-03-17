@@ -6,18 +6,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import com.devanshisukhija.sicsrattendance.Model.FacultyCourse
+import com.devanshisukhija.sicsrattendance.Model.StudentCourse
 import com.devanshisukhija.sicsrattendance.R
 import java.util.*
 
 /**
- *  This Adapter has on itemclick listener attached.
+ * This Adapter has item clicked listener attached to it. It will be used in Student_LectureActivity.
  */
-
-class FacultyCourseAdapter(val context : Context, val courses : ArrayList<FacultyCourse>, val itemClicked : (FacultyCourse) -> Unit) : RecyclerView.Adapter<FacultyCourseAdapter.Holder>() {
+class StudentCourseAdapter(val context : Context, val courses : ArrayList<StudentCourse>, val itemClicked : (StudentCourse) -> Unit) : RecyclerView.Adapter<StudentCourseAdapter.Holder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): Holder {
-        val view = LayoutInflater.from(context).inflate(R.layout.faculty_course_layout, parent , false)
+        val view = LayoutInflater.from(context).inflate(R.layout.student_course_layout, parent , false)
         return Holder(view, itemClicked)
     }//[End : func# 1]
 
@@ -32,17 +31,12 @@ class FacultyCourseAdapter(val context : Context, val courses : ArrayList<Facult
     }//[End : func# 3]
 
     //[Start : inner Holder class] --> func# 4
-    inner class Holder(itemView : View?, val itemClicked: (FacultyCourse) -> Unit) : RecyclerView.ViewHolder(itemView) {
+    inner class Holder(itemView : View?, val itemClicked: (StudentCourse) -> Unit) : RecyclerView.ViewHolder(itemView) {
         //[Variable initialization]
-        val course_name = itemView?.findViewById<TextView>(R.id.faculty_course_name)
-        val course_program = itemView?.findViewById<TextView>(R.id.faculty_course_program)
-        val course_semester = itemView?.findViewById<TextView>(R.id.faculty_course_sem)
-
+        val courseName = itemView?.findViewById<TextView>(R.id.student_course_name)
         //[Start : bindRows] --> func# 5
-        fun bindRows(context: Context, courses: FacultyCourse) {
-            course_name?.text = courses.course_name
-            course_program?.text = courses.course_program
-            course_semester?.text = courses.course_semester
+        fun bindRows(context: Context, courses: StudentCourse) {
+            courseName?.text = courses.course_name
 
             itemView.setOnClickListener {itemClicked(courses)}
         }//[End : func# 5]

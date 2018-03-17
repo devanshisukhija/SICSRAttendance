@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import com.devanshisukhija.sicsrattendance.Model.ScheduledLectures
+import com.devanshisukhija.sicsrattendance.Model.FacultyScheduledLectures
 import com.devanshisukhija.sicsrattendance.R
 import java.util.*
 
@@ -15,7 +15,7 @@ package com.devanshisukhija.sicsrattendance.Adapter
 *
 */
 
-class FacultyScheduleAdapter(val context : Context, val scheduled_lecture : ArrayList<ScheduledLectures>) : RecyclerView.Adapter<FacultyScheduleAdapter.Holder>() {
+class FacultyScheduleAdapter(val context : Context, val faculty_scheduled_lecture : ArrayList<FacultyScheduledLectures>) : RecyclerView.Adapter<FacultyScheduleAdapter.Holder>() {
 
     //[Start : onCreatViewHolder]  --> func#1
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): Holder {
@@ -25,12 +25,12 @@ class FacultyScheduleAdapter(val context : Context, val scheduled_lecture : Arra
 
     //[Start]  --> func#2
     override fun getItemCount(): Int {
-        return scheduled_lecture.count()
+        return faculty_scheduled_lecture.count()
     }//[End : func# 2]
 
     //[Start : onBindViewHolder]  --> func# 3
     override fun onBindViewHolder(holder: Holder?, position: Int) {
-        holder?.bindRows(context, scheduled_lecture[position])
+        holder?.bindRows(context, faculty_scheduled_lecture[position])
     }//[End : func# 3]
 
     //[Start : inner Holder class] --> func# 4
@@ -42,7 +42,7 @@ class FacultyScheduleAdapter(val context : Context, val scheduled_lecture : Arra
         val venue = itemView?.findViewById<TextView>(R.id.lecture_room_column)
         val semester = itemView?.findViewById<TextView>(R.id.lecture_semester)
         //[Start : bindRows] --> func# 5
-        fun bindRows(context: Context, lecture: ScheduledLectures) {
+        fun bindRows(context: Context, lecture: FacultyScheduledLectures) {
 
             program?.text = lecture.program
             course?.text = lecture.course_name

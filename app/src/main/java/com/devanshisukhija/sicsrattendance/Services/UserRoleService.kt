@@ -20,8 +20,6 @@ object UserRoleService {
     private val mDatabaseReference = FirebaseDatabase.getInstance().reference
     private lateinit var mValueEventListener : ValueEventListener
 
-
-
     //[Start : of Store User Data Function] --> func# 1
     fun getRole (complete:(Boolean) -> Unit) {
         val auth = FirebaseAuth.getInstance()

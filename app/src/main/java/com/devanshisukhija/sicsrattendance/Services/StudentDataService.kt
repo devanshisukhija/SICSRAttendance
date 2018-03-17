@@ -9,8 +9,6 @@ import com.google.firebase.database.FirebaseDatabase
  */
 object StudentDataService {
 
-
-
     var name = ""
     var uid = ""
     var prn= ""

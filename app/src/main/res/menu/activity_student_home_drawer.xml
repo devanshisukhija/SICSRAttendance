@@ -9,10 +9,6 @@
             android:icon="@drawable/ic_home_black_24dp"
             android:title="@string/home" />
         <item
-            android:id="@+id/student_sidenav_schedule"
-            android:icon="@drawable/ic_today_black_24dp"
-            android:title="@string/schedule" />
-        <item
             android:id="@+id/student_sidenav_lecture"
             android:icon="@drawable/ic_class_black_24dp"
             android:title="@string/lectures" />

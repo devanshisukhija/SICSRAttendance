@@ -12,13 +12,14 @@ import java.time.format.DateTimeFormatter
  */
  class FacultyRecordHelper {
 
-
-
     val TAG = "FacultyRecordHelper"
     var count : Int = 0
     var secondsRemaining: Long = 0
     var lectureID : String? = null
     var lectureName : String? = null
+    var lectureVenue : String? = null
+    var lectureCode : String? = null
+    var lecturePushID : String? = null
 
  fun check_for_lecture(complete:(Boolean) -> Unit) : Int{
 
@@ -32,11 +33,14 @@ import java.time.format.DateTimeFormatter
                  count++
                  lectureID = x.lectureID
                  lectureName = x.course_name
+                 lectureVenue = x.class_room
+                 lectureCode = x.course_code
+                 lecturePushID = x.lecture_pushID
                  Log.d(TAG, "Test: lectureId assigned")
                  complete(true)
                  } else {
                      Log.d(TAG, "no lectures at this time")
-                     complete(false)
+                     complete(true)
                  }
              } catch (e: ParseException) {
                  Log.d(TAG, "Exception")
@@ -44,7 +48,6 @@ import java.time.format.DateTimeFormatter
                  complete(false)
              }
          }
-
 
      return count
  }
@@ -76,5 +79,5 @@ import java.time.format.DateTimeFormatter
         }
 
         return 0
-}
+    }
 }

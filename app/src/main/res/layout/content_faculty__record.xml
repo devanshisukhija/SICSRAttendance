@@ -8,7 +8,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:context="com.devanshisukhija.sicsrattendance.Controller.FacultyWrap.Faculty_RecordActivity"
@@ -18,18 +18,19 @@
             android:id="@+id/textView12"
             android:layout_width="match_parent"
             android:layout_height="55dp"
-            android:text="TextView" />
+            tools:text="TextView" />
 
         <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/cast_expanded_controller_actionbar_bg_gradient_light"
         android:fontFamily="@font/open_sans_bold"
-        android:paddingLeft="15dp"
-        android:text="Time Remaining "
+        android:paddingStart="15dp"
+        tools:text="Time Remaining "
         android:textColor="#ffffff"
         android:textSize="18sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+            tools:ignore="RtlSymmetry" />
 
     <TextView
         android:id="@+id/faculty_timer"
@@ -37,7 +38,6 @@
         android:layout_height="199dp"
         android:background="@drawable/side_nav_bar"
         android:fontFamily="@font/open_sans"
-        android:text="00:00"
         android:textAlignment="center"
         android:textColor="@color/cardview_dark_background"
         android:textSize="145sp"
@@ -61,11 +61,11 @@
         android:id="@+id/faculty_record_endBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@android:dimen/thumbnail_width"
+        android:layout_marginStart="@android:dimen/thumbnail_width"
         android:layout_marginTop="@dimen/cast_expanded_controller_margin_between_seek_bar_and_control_buttons"
         android:background="@drawable/timer_toggle"
         android:onClick="record_end_lectureBtn_clicked"
-        android:text="End Lecture" />
+        android:text="@string/end_lecture" />
 
         <TextView
 
@@ -74,7 +74,7 @@
             android:layout_marginTop="24dp"
             android:fontFamily="@font/open_sans_bold"
             android:padding="10dp"
-            android:text="Today's Lecture's Learning Objective:"
+            android:text="@string/today_s_lecture_s_learning_objective"
             android:textColor="@color/cast_intro_overlay_background_color"
             android:textSize="30sp" />
 
@@ -87,7 +87,7 @@
         android:layout_height="83dp"
         android:ems="10"
         android:padding="10dp"
-        android:hint="Enter Learning Objective."
+        android:hint="@string/enter_learning_objective"
         android:textAlignment="textStart"
         tools:text="Today's Learning Objective" />
 
@@ -98,7 +98,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/background_color_custom"
         android:onClick="faculty_record_save_LrnObjBtn_clicked"
-        android:text="Save "
+        android:text="@string/save"
         android:textAlignment="gravity"
         android:textColor="@color/sicsrYellow"
         android:textSize="20sp" />

@@ -25,6 +25,8 @@ import com.google.firebase.database.ValueEventListener
 import kotlinx.android.synthetic.main.activity_login.*
 
 
+
+
 /**
  *  Comments template :-
  *  - //[START ]
@@ -121,6 +123,7 @@ class LoginActivity : AppCompatActivity() {
                          Log.d(TAG, "either mUser or currentAuthToken is null.")
                      }
                  } else {
+
                      enableSpinner(false)
                      Log.e(TAG, "signInWithEmail:failure", task.exception)
                      Toast.makeText(this@LoginActivity, "Authentication failed. Make sure email and password are correct",Toast.LENGTH_LONG).show()

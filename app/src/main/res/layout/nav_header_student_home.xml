@@ -20,6 +20,7 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textSize="22sp"
         android:textStyle="bold"
+        android:text="Devanshi Sukhija"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -73,7 +74,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/student_nav_header_name"
-        tools:text="farhana.desai@sicsr.ac.in"
+        android:text="15030121040@sicsr.ac.in"
         tools:ignore="RtlHardcoded" />
 
 </android.support.constraint.ConstraintLayout>
